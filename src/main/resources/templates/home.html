@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mannschaftskasse SV Klein-Gerau</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Willkommen beim Club Manager</h1>
+    <p>Hier können Sie Ihre Mannschaftskasse verwalten, Transaktionen verfolgen und vieles mehr.</p>
+
+
+    <a href="#" th:href="@{/logout}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        Logout
+    </a>
+
+    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    </form>
+</main>
+</body>
+</html>

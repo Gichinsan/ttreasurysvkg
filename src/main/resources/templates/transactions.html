@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaktionen verwalten</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<main>
+<h1>Transaktionen verwalten</h1>
+
+<h3><a href="#" th:href="@{/transactions/add}"><i class="green plus square icon"></i>Neue Transaktion hinzufügen</a></h3>
+
+<table class="ui inverted green table">
+    <thead>
+    <tr>
+        <th>Datum</th>
+        <th>Typ</th>
+        <th>Betrag</th>
+        <th>Beschreibung</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transaction : ${transactions}">
+        <td th:text="${transaction.date}">01.01.2024</td>
+        <td th:text="${transaction.type}">Einnahme</td>
+        <td th:text="${transaction.amount}">100.00</td>
+        <td th:text="${transaction.description}">Beispielbeschreibung</td>
+    </tr>
+    </tbody>
+</table>
+</main>
+</body>
+</html>

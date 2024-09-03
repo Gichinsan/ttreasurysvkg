@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header-content">
+    <meta charset="UTF-8">
+    <title th:replace="${pageTitle}">Club Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="header">
+    <header th:fragment="header">
+        <div class="logo">
+            <img th:src="@{/img/logo.png}" alt="Logo"/>
+        </div>
+        <nav>
+            <a th:href="@{/home}"> <i class="green home icon"></i>Home</a>
+            <a th:href="@{/konto}"><i class="green tv icon"></i>Konto</a>
+            <a th:href="@{/transactions}"><i class="green edit icon"></i>Transaction</a>
+            <a th:href="@{/hilfe}"><i class="green question circle icon"></i>Hilfe</a>
+            <a th:href="@{/logout}"><i class="green power off icon"></i>Abmelden</a>
+        </nav>
+    </header>
+</div>
+</body>
+</html>

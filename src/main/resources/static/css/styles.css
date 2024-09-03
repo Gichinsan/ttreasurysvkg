@@ -1,0 +1,46 @@
+/* Styling für den Header und das Menü */
+header {
+    background-color: #f4f4f4;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+/* Logo-Styling, damit es immer 10% der Bildschirmhöhe beträgt und responsiv ist */
+.logo img {
+    width: 100%;
+    height: 150px;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+}
+
+/* Navigation-Styling */
+nav {
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #007BFF; /* Einfacher Hover-Effekt */
+}
+
+main {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
