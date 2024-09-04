@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<ClubManagerUser, Long> {
     ClubManagerUser findByEmail(String email);
 
     ClubManagerUser findByKontoCode(String kontoCode);
+    
 }

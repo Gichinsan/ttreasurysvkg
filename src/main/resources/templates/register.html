@@ -11,29 +11,48 @@
 </div>
 <main>
     <h2>Register</h2>
-    <form th:action="@{/register}" method="post">
-        <div>
+    <div th:if="${error}">
+        <p style="color: red;">Fehler beim Speichern!</p>
+    </div>
+    <form class="ui form" th:action="@{/register}" th:object="${user}" method="post">
+        <div class="fields">
+            <div class="four wide field">
+                <label for="firstname">Vorname:</label>
+                <input type="text" id="firstname" name="firstName" />
+                <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+            </div>
+            <div class="four wide field">
+                <label for="lastname">Nachname:</label>
+                <input type="text" id="lastname" name="lastName" />
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+            </div>
+        </div>
+        <div class="four wide field">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username"/>
+            <input type="text" id="username" name="username" />
+            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
         </div>
-        <div>
+        <div class="four wide field">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password"/>
+            <input type="password" id="password" name="password" />
+            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
         </div>
-        <div>
+        <div class="four wide field">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required/>
+            <input type="email" id="email" name="email" />
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
-        <div>
+        <div class="four wide field">
             <label for="role">Role:</label>
             <select id="role" name="role" required>
                 <option value="Admin">Admin</option>
                 <option value="Kassenwart">Kassenwart</option>
             </select>
+            <div th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
         </div>
-        <div>
-            <button type="submit">Register</button>
-        </div>
+
+        <button class="green big ui button" type="submit">Register</button>
+
     </form>
 </main>
 </body>

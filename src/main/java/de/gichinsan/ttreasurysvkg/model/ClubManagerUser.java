@@ -16,6 +16,12 @@ public class ClubManagerUser {
     @SequenceGenerator(name = "auser_seq", sequenceName = "auser_seq", allocationSize = 1)
     private Long id;
 
+    @NotEmpty(message = "Vorname darf nicht leer sein")
+    private String firstName;
+
+    @NotEmpty(message = "Nachname darf nicht leer sein")
+    private String lastName;
+
     @Column(unique = true)
     @NotEmpty(message = "Benutzername darf nicht leer sein")
     private String username;
@@ -33,5 +39,9 @@ public class ClubManagerUser {
     private String kontoCode;
 
     private String kontoBeschreibung;
+
+    @OneToOne
+    @JoinColumn(name = "clubimage_id")
+    private ClubImage clubImage;
 
 }

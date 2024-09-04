@@ -9,27 +9,52 @@
 <body>
 <div th:replace="~{header :: header}"></div>
 <main>
-<h1>Willkommen, <span th:text="${user.username}">Benutzer</span></h1>
 
-<p>Ihre Kontonummer: <strong th:text="${user.kontoCode}">123456</strong></p>
+    <div>
+        <img th:if="${user.clubImage != null}"
+             th:src="@{'/images/' + ${user.clubImage.imageName}}"
+             alt="Club Image"
+             style="max-width: 150px; max-height: 150px;" />
 
-<form th:action="@{/konto}" th:object="${user}" method="post">
-    <label for="kontoBeschreibung">Konto Beschreibung:</label>
-    <textarea id="kontoBeschreibung" th:field="*{kontoBeschreibung}"></textarea>
-    <br>
-    <div th:if="${#fields.hasErrors('kontoBeschreibung')}">
-        <p style="color: red;" th:errors="*{kontoBeschreibung}">Fehler in der Beschreibung</p>
+        <img th:if="${user.clubImage == null}"
+             th:src="@{'/img/image.png'}"
+             alt="Default Club Image"
+             style="max-width: 150px; max-height: 150px;" />
     </div>
-    <button type="submit">Beschreibung speichern</button>
-</form>
+    <form class="ui form" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+        <div class="field">
+            <label for="file">Image</label>
+            <input id="file" type="file" name="file" required>
+        </div>
+        <button class="ui button" type="submit">Upload</button>
+    </form>
 
-<div th:if="${success}">
-    <p style="color: green;">Beschreibung erfolgreich aktualisiert!</p>
-</div>
+    <h1>Willkommen, <span th:text="${user.firstName} + ' ' + ${user.lastName}">Benutzer</span></h1>
 
-<div th:if="${error}">
-    <p style="color: red;">Fehler beim Speichern der Beschreibung!</p>
-</div>
+    <p>Ihre Kontonummer: <strong th:text="${user.kontoCode}">123456</strong></p>
+
+    <form class="ui form" th:action="@{/konto}" th:object="${user}" method="post">
+        <div class="four wide field">
+            <label for="kontoBeschreibung">Konto Beschreibung:</label>
+            <textarea rows="2" id="kontoBeschreibung" th:field="*{kontoBeschreibung}"></textarea>
+        </div>
+        <br>
+        <div th:if="${#fields.hasErrors('kontoBeschreibung')}">
+            <p style="color: red;" th:errors="*{kontoBeschreibung}">Fehler in der Beschreibung</p>
+        </div>
+        <button class="green submit button" type="submit"><i class="green save icon"></i>Beschreibung speichern
+        </button>
+    </form>
+
+    <div th:if="${success}">
+        <p style="color: green;">Beschreibung erfolgreich aktualisiert!</p>
+    </div>
+
+    <div th:if="${error}">
+        <p style="color: red;">Fehler beim Speichern der Beschreibung!</p>
+    </div>
+
+
 </main>
 </body>
 </html>

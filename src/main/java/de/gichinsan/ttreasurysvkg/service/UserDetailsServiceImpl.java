@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         ClubManagerUser user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Benutzer nicht gefunden: " + username));
-        ;
+
         if (user == null) {
             throw new UsernameNotFoundException("Benutzer nicht gefunden");
         }

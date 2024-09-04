@@ -9,31 +9,35 @@
 <body>
 <div th:replace="~{header :: header}"></div>
 <main>
-<h1>Neue Transaktion hinzufügen</h1>
+    <h1>Neue Transaktion hinzufügen</h1>
 
-<form th:action="@{/transactions/add}" th:object="${transaction}" method="post">
-    <label for="type">Typ:</label>
-    <select id="type" th:field="*{type}">
-        <option value="Einnahme">Einnahme</option>
-        <option value="Ausgabe">Ausgabe</option>
-    </select>
-    <br>
+    <form class="ui form" th:action="@{/transactions/add}" th:object="${transaction}" method="post">
+        <div class="four wide field">
+            <label for="type">Typ:</label>
+            <select id="type" th:field="*{type}">
+                <option value="Einnahme">Einnahme</option>
+                <option value="Ausgabe">Ausgabe</option>
+            </select>
+        </div>
 
-    <label for="amount">Betrag:</label>
-    <input type="number" id="amount" th:field="*{amount}" step="0.01" required />
-    <br>
+        <div class="ui right labeled input">
+            <label for="amount" class="ui label">€</label>
+            <input type="text" placeholder="Betrag" id="amount" th:field="*{amount}" required/>
+            <div class="ui basic label">.00</div>
+        </div>
 
-    <label for="description">Beschreibung:</label>
-    <textarea id="description" th:field="*{description}"></textarea>
-    <br>
+        <div class="six wide field">
+            <label for="description">Beschreibung:</label>
+            <textarea rows="2" id="description" th:field="*{description}"></textarea>
+        </div>
 
-    <!-- Stelle sicher, dass date korrekt verarbeitet wird -->
-    <input type="hidden" th:field="*{date}" th:value="${transaction.date}" />
+        <!-- Stelle sicher, dass date korrekt verarbeitet wird -->
+        <input type="hidden" th:field="*{date}" th:value="${transaction.date}"/>
 
-    <button type="submit">Speichern</button>
-</form>
+        <button type="submit"><i class="green save icon"></i>Speichern</button>
+    </form>
 
-<a href="#" th:href="@{/transactions}">Zurück zu den Transaktionen</a>
+    <h3><a href="#" th:href="@{/transactions}"><i class="green step backward icon"></i>Zurück zu den Transaktionen</a></h3>
 
 </main>
 </body>
