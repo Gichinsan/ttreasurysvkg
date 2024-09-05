@@ -6,9 +6,11 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="logo">
-    <img th:src="@{/img/logo.png}" alt="Logo"/>
-</div>
+<header>
+    <div class="logo">
+        <img th:src="@{/img/logo.png}" alt="Logo"/>
+    </div>
+</header>
 <main>
     <h2>Register</h2>
     <div th:if="${error}">
@@ -18,28 +20,28 @@
         <div class="fields">
             <div class="four wide field">
                 <label for="firstname">Vorname:</label>
-                <input type="text" id="firstname" name="firstName" />
+                <input type="text" id="firstname" name="firstName"/>
                 <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
             </div>
             <div class="four wide field">
                 <label for="lastname">Nachname:</label>
-                <input type="text" id="lastname" name="lastName" />
+                <input type="text" id="lastname" name="lastName"/>
                 <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
             </div>
         </div>
         <div class="four wide field">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" />
+            <input type="text" id="username" name="username"/>
             <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
         </div>
         <div class="four wide field">
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" />
+            <input type="password" id="password" name="password"/>
             <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
         </div>
         <div class="four wide field">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" />
+            <input type="email" id="email" name="email"/>
             <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
         <div class="four wide field">

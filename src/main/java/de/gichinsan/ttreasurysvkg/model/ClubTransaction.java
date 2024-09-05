@@ -17,7 +17,8 @@ public class ClubTransaction {
     private Long id;
 
     @NotNull
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
 
     @NotNull
     private Double amount;

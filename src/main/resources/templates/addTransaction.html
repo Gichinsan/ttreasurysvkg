@@ -15,8 +15,8 @@
         <div class="four wide field">
             <label for="type">Typ:</label>
             <select id="type" th:field="*{type}">
-                <option value="Einnahme">Einnahme</option>
-                <option value="Ausgabe">Ausgabe</option>
+                <option th:value="${T(de.gichinsan.ttreasurysvkg.model.TransactionType).HABEN}" th:text="#{enum.haben}">Einnahme</option>
+                <option th:value="${T(de.gichinsan.ttreasurysvkg.model.TransactionType).SOLL}" th:text="#{enum.soll}">Ausgabe</option>
             </select>
         </div>
 

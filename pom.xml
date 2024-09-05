@@ -66,6 +66,33 @@
 			<artifactId>derbytools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- iText 7 Core Library -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>kernel</artifactId>
+			<version>7.1.15</version> <!-- Achte auf die neueste Version -->
+		</dependency>
+
+		<!-- iText 7 Layout Library -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+			<version>7.1.15</version> <!-- Achte auf die neueste Version -->
+		</dependency>
+
+		<!-- iText 7 I/O Library (optional, aber nützlich) -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>io</artifactId>
+			<version>7.1.15</version> <!-- Achte auf die neueste Version -->
+		</dependency>
+
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.14</version> <!-- Stelle sicher, dass du die neueste Version verwendest -->
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

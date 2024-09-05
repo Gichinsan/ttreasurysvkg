@@ -9,28 +9,27 @@
 <body>
 <div th:replace="~{header :: header}"></div>
 <main>
-
+    <h1>Willkommen, <span th:text="${user.firstName} + ' ' + ${user.lastName}">Benutzer</span></h1>
     <div>
         <img th:if="${user.clubImage != null}"
              th:src="@{'/images/' + ${user.clubImage.imageName}}"
              alt="Club Image"
-             style="max-width: 150px; max-height: 150px;" />
+             style="max-width: 150px; max-height: 150px;"/>
 
         <img th:if="${user.clubImage == null}"
              th:src="@{'/img/image.png'}"
              alt="Default Club Image"
-             style="max-width: 150px; max-height: 150px;" />
+             style="max-width: 150px; max-height: 150px;"/>
     </div>
     <form class="ui form" th:action="@{/upload}" method="post" enctype="multipart/form-data">
-        <div class="field">
+        <div class="four wide field">
             <label for="file">Image</label>
             <input id="file" type="file" name="file" required>
         </div>
-        <button class="ui button" type="submit">Upload</button>
+        <button class="green submit button" type="submit"><i class="green upload icon"></i>Vereins Logo hochladen</button>
     </form>
 
-    <h1>Willkommen, <span th:text="${user.firstName} + ' ' + ${user.lastName}">Benutzer</span></h1>
-
+    <div class="ui divider"></div>
     <p>Ihre Kontonummer: <strong th:text="${user.kontoCode}">123456</strong></p>
 
     <form class="ui form" th:action="@{/konto}" th:object="${user}" method="post">

@@ -38,9 +38,15 @@ nav a:hover {
 }
 
 main {
+    background-color: #afecaf;
     width: 100%;
     padding: 20px;
     display: flex;
     justify-content: space-between;
     flex-direction: column;
+}
+
+.kontostand {
+    text-align: center;
+    padding: 15px;
 }

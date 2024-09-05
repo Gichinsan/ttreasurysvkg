@@ -6,9 +6,11 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="logo">
-    <img th:src="@{/img/logo.png}" alt="Logo"/>
-</div>
+<header>
+    <div class="logo">
+        <img th:src="@{/img/logo.png}" alt="Logo"/>
+    </div>
+</header>
 <main>
     <div th:if="${param.logout}">
         <p style="color: green;">Sie haben sich erfolgreich abgemeldet.</p>
