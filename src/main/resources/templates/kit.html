@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trikotsatz-Liste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Liste der Trikotsätze</h1>
+
+    <!-- Button zum Erfassen eines neuen Trikotsatzes -->
+    <h3><a href="#" th:href="@{/trikots/erstellen}"><i class="green plus square icon"></i>Neuen Trikotsatz erfassen</a></h3>
+
+    <table class="ui inverted green table">
+        <thead>
+        <tr>
+            <th>Trikot-Typ</th>
+            <th>Anzahl Trikots</th>
+            <th>Anzahl Hosen</th>
+            <th>Hose Größe</th>
+            <th>Anzahl Stutzen</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="trikotSatz : ${trikots}">
+            <td th:text="${trikotSatz.trikotTyp}"></td>
+            <td th:text="${trikotSatz.trikotAnzahl}"></td>
+            <td th:text="${trikotSatz.hoseAnzahl}"></td>
+            <td th:text="${trikotSatz.hoseGroesse}"></td>
+            <td th:text="${trikotSatz.stutzenAnzahl}"></td>
+            <td>
+                <a th:href="@{/trikots/update/{id}(id=${trikotSatz.id})}" class="ui button">Bearbeiten</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>

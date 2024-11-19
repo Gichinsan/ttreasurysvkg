@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Neuer Spieler erfassen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Neuer Spieler</h1>
+    <form class="ui form"
+          th:action="@{/team/create}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${team}">
+        <div class="four wide field">
+            <label>Trikot-Typ</label>
+            <select class="ui dropdown" th:field="*{ageGroup}">
+                <option value="G1">G1</option>
+                <option value="G2">G2</option>
+                <option value="PEDNING">Pending</option>
+            </select>
+        </div>
+
+        <div class="four wide field">
+            <label>Vorname</label>
+            <input type="text" th:field="*{firstName}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Nachname</label>
+            <input type="text" th:field="*{lastName}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Geburtsdatum</label>
+            <input type="date"
+                   th:field="*{birthDate}"
+                   required>
+        </div>
+
+        <button type="submit"><i class="green save icon"></i>Speichern</button>
+    </form>
+
+    <h3><a href="#" th:href="@{/team}"><i class="green step backward icon"></i>Zurück zum Team</a></h3>
+</main>
+
+</body>
+</html>

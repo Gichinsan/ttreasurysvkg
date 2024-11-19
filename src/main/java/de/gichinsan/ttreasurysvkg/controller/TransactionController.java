@@ -10,9 +10,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.ClubTransaction;
-import de.gichinsan.ttreasurysvkg.model.TransactionType;
 import de.gichinsan.ttreasurysvkg.repository.ITransactionRepository;
-import de.gichinsan.ttreasurysvkg.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,35 +29,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 @Controller
-public class TransactionController extends BaseController{
+public class TransactionController extends BaseController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ITransactionRepository ITransactionRepository;
+    private ITransactionRepository iTransactionRepository;
 
     @GetMapping("/transactions")
     public String viewTransactions(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
-        List<ClubTransaction> clubTransactions = ITransactionRepository.findByUser(user);
+        List<ClubTransaction> clubTransactions = iTransactionRepository.findByUser(user);
+        String result = getResult(user);
 
-        double balance = clubTransactions.stream()
-                .mapToDouble(transaction ->
-                        TransactionType.HABEN.equals(transaction.getType())
-                                ? transaction.getAmount()
-                                : -transaction.getAmount())
-                .sum();
-
-        String totald = String.format(Locale.GERMAN, "%,.2f", balance);
-
-        model.addAttribute("totalCost", totald);
+        model.addAttribute("totalCost", result);
         model.addAttribute("transactions", clubTransactions);
         return "transactions";
     }
+
 
     @GetMapping("/transactions/add")
     public String addTransactionForm(Model model) {
@@ -83,18 +69,15 @@ public class TransactionController extends BaseController{
 
         clubTransaction.setUser(user);
         clubTransaction.setDate(LocalDate.now());
-        ITransactionRepository.save(clubTransaction);
+        iTransactionRepository.save(clubTransaction);
 
         return "redirect:/transactions";
     }
 
     @GetMapping("/transactions/export")
     public ResponseEntity<byte[]> downloadTransactionsAsPdf(@AuthenticationPrincipal UserDetails userDetails) throws IOException {
-        String username = userDetails.getUsername();
-        ClubManagerUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Benutzer nicht gefunden: " + username));
-
-        List<ClubTransaction> transactions = ITransactionRepository.findByUser(user);
+        ClubManagerUser user = getCurrentClubManagerUser(userDetails);
+        List<ClubTransaction> transactions = iTransactionRepository.findByUser(user);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(out);

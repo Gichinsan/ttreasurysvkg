@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trikotsatz-Liste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Team</h1>
+
+    <!-- Button zum Erfassen eines neuen Trikotsatzes -->
+    <h3><a href="#" th:href="@{/team/create}"><i class="green plus square icon"></i>Neues Teammitglied erfassen</a></h3>
+
+    <table class="ui inverted green table">
+        <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Birthdate</th>
+            <th>Age Group</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="teammember : ${team}">
+            <td th:text="${teammember.firstName}"></td>
+            <td th:text="${teammember.lastName}"></td>
+            <td th:text="${#dates.format(teammember.birthDate,'dd.MM.yyyy')}"></td>
+            <td th:text="${teammember.ageGroup}"></td>
+            <td>
+                <a th:href="@{/team/update/{id}(id=${teammember.id})}" class="ui button">Bearbeiten</a>
+                <form th:action="@{/team/remove}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${teammember.id}" />
+                    <button type="submit" class="ui red button">Löschen</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>

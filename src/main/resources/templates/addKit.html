@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trikotsatz erfassen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Trikotsatz erfassen</h1>
+    <form class="ui form"
+          th:action="${trikotSatz.id != null} ? @{/trikots/update/{id}(id=${trikotSatz.id})} : @{/trikots/erstellen}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${trikotSatz}">
+        <div class="four wide field">
+            <label>Trikot-Typ</label>
+            <select class="ui dropdown" th:field="*{trikotTyp}">
+                <option value="HEIM">Heim</option>
+                <option value="AUSWAERTS">Auswärts</option>
+            </select>
+        </div>
+
+        <div class="four wide field">
+            <label>Trikot Anzahl</label>
+            <input type="number" th:field="*{trikotAnzahl}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Hose Anzahl</label>
+            <input type="number" th:field="*{hoseAnzahl}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Hose Größe</label>
+            <input type="text" th:field="*{hoseGroesse}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Stutzen Anzahl</label>
+            <input type="number" th:field="*{stutzenAnzahl}" required>
+        </div>
+
+        <button type="submit"><i class="green save icon"></i>Speichern</button>
+    </form>
+
+    <h3><a href="#" th:href="@{/kit}"><i class="green step backward icon"></i>Zurück zu den Transaktionen</a></h3>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>
