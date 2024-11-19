@@ -8,6 +8,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.TextAlignment;
 import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.ClubTransaction;
 import de.gichinsan.ttreasurysvkg.repository.ITransactionRepository;
@@ -27,8 +28,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 public class TransactionController extends BaseController {
@@ -79,6 +84,8 @@ public class TransactionController extends BaseController {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         List<ClubTransaction> transactions = iTransactionRepository.findByUser(user);
 
+        String result = getResult(user);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(out);
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -95,9 +102,26 @@ public class TransactionController extends BaseController {
 
         document.add(new Paragraph("Kontonummer " + user.getKontoCode()));
         document.add(new Paragraph("Transaktionen von " + user.getKontoBeschreibung()));
-        document.add(new Paragraph("Stand vom " + LocalDate.now()));
+        try {
+            result = result.trim().replace(",", ".");
 
-        Table table = new Table(new float[]{1, 5, 2, 2, 2});
+            if (!result.matches("^-?\\d+(\\.\\d+)?$")) {
+                document.add(new Paragraph("Fehler: Ungültiger Wert für den Kontostand."));
+            }
+
+            double resultValue = Double.parseDouble(result);
+            NumberFormat currencyFormatter = DecimalFormat.getCurrencyInstance(Locale.GERMANY);
+            String formattedBalance = currencyFormatter.format(resultValue);
+
+            document.add(new Paragraph("Aktueller Kontostand: " + formattedBalance));
+        } catch (NumberFormatException e) {
+            document.add(new Paragraph("Fehler: Ungültiger Wert für den Kontostand."));
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.uuuu", Locale.GERMAN);
+        LocalDate now = LocalDate.now();
+        document.add(new Paragraph("Stand vom " + now.format(formatter)));
+
+        Table table = new Table(new float[]{1, 5, 2, 3, 2});
         table.addHeaderCell("ID");
         table.addHeaderCell("Beschreibung");
         table.addHeaderCell("Type");
@@ -105,11 +129,11 @@ public class TransactionController extends BaseController {
         table.addHeaderCell("Datum");
 
         for (ClubTransaction transaction : transactions) {
-            table.addCell(String.valueOf(transaction.getId()));
-            table.addCell(transaction.getDescription());
-            table.addCell(transaction.getType().name());
-            table.addCell(String.valueOf(transaction.getAmount()));
-            table.addCell(transaction.getDate().toString());
+            table.addCell(String.valueOf(transaction.getId())).setTextAlignment(TextAlignment.LEFT);
+            table.addCell(transaction.getDescription()).setTextAlignment(TextAlignment.LEFT);
+            table.addCell(transaction.getType().name()).setTextAlignment(TextAlignment.LEFT);
+            table.addCell(DecimalFormat.getCurrencyInstance(Locale.GERMANY).format(transaction.getAmount())).setTextAlignment(TextAlignment.RIGHT);
+            table.addCell(transaction.getDate().format(formatter));
         }
 
         document.add(table);
