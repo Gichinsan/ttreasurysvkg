@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.ClubTransaction;
+import de.gichinsan.ttreasurysvkg.model.ClubTransactionDto;
 import de.gichinsan.ttreasurysvkg.repository.ITransactionRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,10 +50,28 @@ public class TransactionController extends BaseController {
     public String viewTransactions(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         List<ClubTransaction> clubTransactions = iTransactionRepository.findByUser(user);
+
+        List<ClubTransactionDto> clubTransactionDtoList = new ArrayList<ClubTransactionDto>();
+
         String result = getResult(user);
 
+        for (ClubTransaction clubTransaction : clubTransactions) {
+            Date date = Date.from(clubTransaction.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+            String formattedDate = formatter.format(date);
+
+            ClubTransactionDto clubTransactionDto = new ClubTransactionDto();
+            clubTransactionDto.setId(clubTransaction.getId());
+            clubTransactionDto.setType(clubTransaction.getType());
+            clubTransactionDto.setDescription(clubTransaction.getDescription());
+            clubTransactionDto.setAmount(DecimalFormat.getCurrencyInstance(Locale.GERMANY).format(clubTransaction.getAmount()));
+            clubTransactionDto.setDate(formattedDate);
+
+            clubTransactionDtoList.add(clubTransactionDto);
+        }
+
         model.addAttribute("totalCost", result);
-        model.addAttribute("transactions", clubTransactions);
+        model.addAttribute("transactions", clubTransactionDtoList);
         return "transactions";
     }
 

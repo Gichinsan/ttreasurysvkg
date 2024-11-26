@@ -3,6 +3,7 @@ package de.gichinsan.ttreasurysvkg.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -24,6 +25,7 @@ public class ClubTransaction {
     private Double amount;
 
     @NotNull
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private LocalDate date;
 
     private String description;

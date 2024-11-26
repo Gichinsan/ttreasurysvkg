@@ -43,7 +43,7 @@
         <tbody>
         <tr th:each="transaction : ${transactions}">
             <td th:text="${transaction.date}">01.01.2024</td>
-            <td th:text="${transaction.type}">Einnahme</td>
+            <td th:text="${transaction.type}">Type</td>
             <td th:text="${transaction.amount}">100.00</td>
             <td th:text="${transaction.description}">Beispielbeschreibung</td>
         </tr>
