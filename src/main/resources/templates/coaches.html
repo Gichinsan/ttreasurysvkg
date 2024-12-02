@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meldung von Trainingseinheiten</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<main>
+    <h1>Meldung von Trainingseinheiten</h1>
+
+    <h3><a href="#" th:href="@{/coach/create}"><i class="green plus square icon"></i>Neuen Trainer erfassen</a></h3>
+
+    <table class="ui inverted green table">
+        <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Anzahl Stunden</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="coach : ${coaches}">
+            <td th:text="${coach.firstName}"></td>
+            <td th:text="${coach.lastName}"></td>
+            <td th:text="${coach.totalTrainHours}"></td>
+            <td>
+                <a th:href="@{/coach/edit/{id}(id=${coach.id})}" class="ui button">Bearbeiten</a>
+                <a th:href="@{/coach/export/{id}(id=${coach.id})}" class="ui button">Export</a>
+                <form th:action="@{/coach/remove}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${coach.id}" />
+                    <button type="submit" class="ui red button">Löschen</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+</main>
+</body>
+</html>
