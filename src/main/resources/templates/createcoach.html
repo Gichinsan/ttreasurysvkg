@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meldung von Trainingseinheiten</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<main>
+    <h1>Neuen Trainer erfassen</h1>
+
+    <form class="ui form"
+          th:action="@{/coach/create}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${coach}">
+
+        <div class="four wide field">
+            <label>Vorname</label>
+            <input type="text" th:field="*{firstName}" required>
+        </div>
+
+        <div class="four wide field">
+            <label>Nachname</label>
+            <input type="text" th:field="*{lastName}" required>
+        </div>
+
+        <button type="submit"><i class="green save icon"></i>Erstellen</button>
+    </form>
+
+
+
+    <h3><a href="#" th:href="@{/coaches}"><i class="green step backward icon"></i>Zurück zu den Transaktionen</a></h3>
+
+</main>
+</body>
+</html>

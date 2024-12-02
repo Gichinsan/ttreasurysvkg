@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meldung von Trainingseinheiten</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+<main>
+    <h1>Neuen Trainingszeiten erfassen</h1>
+
+    <form class="ui form"
+          th:action="@{/coach/{id}/addTime(id=${coach.id})}"
+          method="post"
+          th:object="${newCoachTime}">
+        <h3>Neue Trainingszeit hinzufügen</h3>
+
+        <h4 th:text="${coach.firstName}"></h4>
+        <h4 th:text="${coach.lastName}"></h4>
+
+        <div class="four wide field">
+            <label>Trainingsstunden</label>
+            <input type="date" th:field="*{trainDate}" required>
+        </div>
+        <div class="four wide field">
+            <label>Startzeit</label>
+            <input type="time" th:field="*{startTime}" required>
+        </div>
+        <div class="four wide field">
+            <label>Endzeit</label>
+            <input type="time" th:field="*{endTime}" required>
+        </div>
+        <div class="four wide field">
+            <label>Trainingsart</label>
+            <select th:field="*{trainType}" class="ui dropdown">
+                <option value="" disabled selected>Wähle eine Trainingsart</option>
+                <option th:each="type : ${trainTypes}" th:value="${type}" th:text="${type}"></option>
+            </select>
+        </div>
+
+        <button type="submit"><i class="green save icon"></i> Zeit hinzufügen</button>
+    </form>
+
+
+    <h3><a href="#" th:href="@{/coaches}"><i class="green step backward icon"></i>Zurück zur Übersicht</a></h3>
+
+    <table class="ui inverted green table">
+        <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Beginn</th>
+            <th>Ende</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="time : ${coach.coachTimes}">
+            <td th:text="${#dates.format(time.trainDate,'dd.MM.yyyy')}"></td>
+            <td th:text="${time.startTime}"></td>
+            <td th:text="${time.endTime}"></td>
+            <td>
+                <form th:action="@{/coach/{coachId}/removeTime/{timeId}(coachId=${coach.id}, timeId=${time.id})}" method="post">
+                    <button type="submit" class="ui red button">Entfernen</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </form>
+</main>
+</body>
+</html>

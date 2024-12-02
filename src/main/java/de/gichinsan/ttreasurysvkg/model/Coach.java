@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class Coach {
@@ -19,4 +22,30 @@ public class Coach {
 
     @NotEmpty(message = "Nachname darf nicht leer sein")
     private String lastName;
+
+    private String trainHours;
+
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CoachTime> coachTimes = new ArrayList<>();
+
+    public String getTotalTrainHours() {
+        long totalMinutes = coachTimes.stream()
+                .filter(ct -> ct.getStartTime() != null && ct.getEndTime() != null)
+                .mapToLong(ct -> java.time.Duration.between(ct.getStartTime(), ct.getEndTime()).toMinutes())
+                .sum();
+
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        return hours + " Stunden " + minutes + " Minuten";
+    }
+
+    public void addCoachTime(CoachTime coachTime) {
+        coachTimes.add(coachTime);
+        coachTime.setCoach(this);
+    }
+
+    public void removeCoachTime(CoachTime coachTime) {
+        coachTimes.remove(coachTime);
+        coachTime.setCoach(null);
+    }
 }
