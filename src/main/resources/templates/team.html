@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Trikotsatz-Liste</title>
+    <title>Teammitglieder-Liste</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
@@ -11,9 +11,24 @@
 <div th:replace="~{header :: header}"></div>
 
 <main>
-    <h1>Team</h1>
+    <h1>Teammitglieder</h1>
 
-    <h3><a href="#" th:href="@{/team/create}"><i class="green plus square icon"></i>Neues Teammitglied erfassen</a></h3>
+    <div class="ui three column grid">
+        <div class="row">
+            <div class="column">
+                <h3><a href="#" th:href="@{/team/create}"><i class="green plus square icon"></i>Neues Teammitglied
+                    erfassen</a></h3>
+            </div>
+            <div class="column">
+                <h3><a href="#" th:href="@{/team/statistik}"><i class="green plus square icon"></i>Team Statistik</a></h3>
+            </div>
+            <div class="column">
+                <h3><a href="#" th:href="@{/team/upload}"><i class="green plus square icon"></i>Mitgliederliste
+                    Hochladen</a></h3>
+            </div>
+        </div>
+    </div>
+
 
     <table class="ui inverted green table">
         <thead>
@@ -21,7 +36,7 @@
             <th>Firstname</th>
             <th>Lastname</th>
             <th>Birthdate</th>
-            <th>Age Group</th>
+            <th>Altersgruppe</th>
             <th>Aktionen</th>
         </tr>
         </thead>
@@ -34,7 +49,7 @@
             <td>
                 <a th:href="@{/team/update/{id}(id=${teammember.id})}" class="ui button">Bearbeiten</a>
                 <form th:action="@{/team/remove}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${teammember.id}" />
+                    <input type="hidden" name="id" th:value="${teammember.id}"/>
                     <button type="submit" class="ui red button">Löschen</button>
                 </form>
             </td>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Neuer Spieler erfassen</title>
+    <title>Spieler erfassen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
@@ -11,18 +11,18 @@
 <div th:replace="~{header :: header}"></div>
 
 <main>
-    <h1>Neuer Spieler</h1>
+    <h1>Spieler</h1>
     <form class="ui form"
           th:action="@{/team/create}"
           method="post"
           enctype="multipart/form-data"
           th:object="${team}">
         <div class="four wide field">
-            <label>Trikot-Typ</label>
+            <label>Altersgruppe</label>
             <select class="ui dropdown" th:field="*{ageGroup}">
                 <option value="G1">G1</option>
                 <option value="G2">G2</option>
-                <option value="PEDNING">Pending</option>
+                <option value="pending">Pending</option>
             </select>
         </div>
 
