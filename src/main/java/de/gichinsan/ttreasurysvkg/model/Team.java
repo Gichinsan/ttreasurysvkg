@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -29,8 +28,22 @@ public class Team {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 
+    private String nationalitaet;
+
+    private String aStatus;
+
+    private String vsStatus;
+
+    private String passnummer;
+
+    private String spielrechtAb;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date registriertAm;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private AgeGroups ageGroup;
+
 
 }
