@@ -3,6 +3,7 @@ package de.gichinsan.ttreasurysvkg.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,14 @@ public class Coach {
 
     private String trainHours;
 
-    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @ToString.Exclude  //
     private List<CoachTime> coachTimes = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Coach{id=" + id + ", firstName='" + firstName + "', lastName='" + lastName + "'}";
+    }
 
     public String getTotalTrainHours() {
         long totalMinutes = coachTimes.stream()

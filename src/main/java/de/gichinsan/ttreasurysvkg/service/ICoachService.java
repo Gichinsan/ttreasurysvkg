@@ -9,6 +9,8 @@ public interface ICoachService {
 
     List<Coach> getAllCoaches();
 
+    List<Coach> findAllById(List<Long> ids);
+
     void save(Coach coach);
 
     Coach getCoachByIdWithCoachTimes(Long id);

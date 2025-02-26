@@ -1,5 +1,6 @@
 package de.gichinsan.ttreasurysvkg.service;
 
+import de.gichinsan.ttreasurysvkg.model.AgeGroups;
 import de.gichinsan.ttreasurysvkg.model.Team;
 import de.gichinsan.ttreasurysvkg.repository.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ public class TeamService implements ITeamService {
     }
 
     @Override
+    public List<Team> findAllById(List<Long> ids) {
+        return iTeamRepository.findAllById(ids);
+    }
+
+    @Override
     public void save(Team team) {
         iTeamRepository.save(team);
     }
@@ -31,6 +37,11 @@ public class TeamService implements ITeamService {
     @Override
     public void deleteById(Long id) {
         iTeamRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Team> getTeamMembersByAgeGroup(AgeGroups ageGroup) {
+        return iTeamRepository.findByAgeGroup(ageGroup);
     }
 
 
