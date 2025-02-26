@@ -16,8 +16,15 @@ public class CoachService implements ICoachService {
     private ICoachRepository iCoachRepository;
 
     @Override
+    @Transactional
     public List<Coach> getAllCoaches() {
-        return iCoachRepository.findAllWithCoachTimes();
+        return iCoachRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public List<Coach> findAllById(List<Long> ids) {
+        return iCoachRepository.findAllById(ids);
     }
 
     @Override

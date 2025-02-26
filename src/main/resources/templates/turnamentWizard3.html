@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Turnier-Planung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Turnier-Planung</h1>
+
+    <div class="ui container centered">
+        <div class="ui small steps">
+            <div class="disabled step">
+                <i class="users icon"></i>
+                <div class="content">
+                    <div class="title">Step 1</div>
+                    <div class="description">Allgemeine Turnierdaten</div>
+                </div>
+            </div>
+            <div class="disabled step">
+                <i class="tasks icon"></i>
+                <div class="content">
+                    <div class="title">Step 2</div>
+                    <div class="description">Team und Trainer Zuordnung</div>
+                </div>
+            </div>
+            <div class="active step">
+                <i class="futbol icon"></i>
+                <div class="content">
+                    <div class="title">Step 3</div>
+                    <div class="description">Review Kader</div>
+                </div>
+            </div>
+            <div class="disabled step">
+                <i class="info icon"></i>
+                <div class="content">
+                    <div class="title">Step 4</div>
+                    <div class="description">Freigabe & Hinweise</div>
+                </div>
+            </div>
+        </div>
+
+
+        <h2>Step 3</h2>
+        <table class="ui celled table">
+            <tbody>
+            <tr>
+                <td><strong>Datum:</strong></td>
+                <td th:text="${#dates.format(turnament.turanmentDate, 'dd.MM.yyyy')}"></td>
+            </tr>
+            <tr>
+                <td><strong>Club:</strong></td>
+                <td th:text="${turnament.club}"></td>
+            </tr>
+            <tr>
+                <td><strong>Ort:</strong></td>
+                <td th:text="${turnament.place}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3 class="ui header">Kader Übersicht</h3>
+        <div class="ui segment">
+            <strong>Trainer:</strong> <span th:text="${coachesString}"></span>
+        </div>
+
+        <div class="ui segment">
+            <strong>Spieler:</strong> <span th:text="${playersString}"></span>
+        </div>
+
+        <div class="ui center aligned grid">
+            <div class="row">
+                <form th:action="@{/backtotw2}" method="post">
+                    <button class="green submit button" type="submit">
+                        <i class="green caret square right icon"></i>Zurück zu Step 3
+                    </button>
+                </form>
+                <form th:action="@{/reviewAndSave}" method="post"
+                      th:object="${turnament}">
+                    <button class="green submit button" type="submit">
+                        <i class="green caret square right icon"></i>Speichern und Weiter zu Step 4
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+        <div th:if="${message}">
+            <div class="ui positive message">
+                <p th:text="${message}"></p>
+            </div>
+        </div>
+
+    </div>
+
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Turnier-Planung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Turnier-Planung</h1>
+
+
+    <div class="ui two column grid">
+        <div class="row">
+            <div class="column">
+                <h3><a href="#" th:href="@{/turnament/create}"><i class="green plus square icon"></i>Neues Turnier
+                    planen</a></h3>
+            </div>
+            <div class="column">
+                <h3><a href="#" th:href="@{/turnament/statistik}"><i class="green plus square icon"></i>Turnier
+                    Statistik</a></h3>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui one column grid">
+        <div class="row">
+            <div class="column">
+                <div class="ui form">
+
+                    <table class="ui inverted green table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Termin</th>
+                            <th>Club</th>
+                            <th>Ort</th>
+                            <th>Aktionen</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="turnament : ${turnamentList}">
+                            <td th:text="${turnament.id}"></td>
+                            <td th:text="${#dates.format(turnament.turanmentDate,'dd.MM.yyyy')}"></td>
+                            <td th:text="${turnament.club}"></td>
+                            <td th:text="${turnament.place}"></td>
+                            <td>
+
+                                <form th:action="@{/turnament/edit}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${turnament.id}"/>
+                                    <button type="submit" class="ui button">Bearbeiten</button>
+                                </form>
+
+                                <form th:action="@{/turnament/remove}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${turnament.id}"/>
+                                    <button type="submit" class="ui red button">Löschen</button>
+                                </form>
+                                <form th:action="@{/turnament/export}" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" th:value="${turnament.id}"/>
+                                <button type="submit" class="ui blue button">Export</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>

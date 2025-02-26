@@ -15,4 +15,6 @@ public interface ICoachRepository extends JpaRepository<Coach, Long> {
 
     @Query("SELECT c FROM Coach c LEFT JOIN FETCH c.coachTimes")
     List<Coach> findAllWithCoachTimes();
+
+    List<Coach> findAllById(Iterable<Long> id);
 }
