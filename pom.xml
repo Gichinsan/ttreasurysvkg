@@ -10,10 +10,11 @@
 	</parent>
 	<groupId>de.gichinsan</groupId>
 	<artifactId>ttreasurysvkg</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<name>ttreasurysvkg</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Project to manage a soccer team</description>
 	<url/>
+	<packaging>jar</packaging>
 	<licenses>
 		<license/>
 	</licenses>
@@ -124,6 +125,21 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.18.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>set</goal>
+						</goals>
+						<configuration>
+							<newVersion>0.0.2</newVersion> <!-- Neue Version hier eintragen -->
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
