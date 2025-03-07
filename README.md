@@ -1,2 +1,2 @@
 # ttreasurysvkg
-Team treasury system for SV Klein Gerau
+Team treasury system for small soccer teams
