@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.4.3</version>
+		<relativePath/>
 	</parent>
 	<groupId>de.gichinsan</groupId>
 	<artifactId>ttreasurysvkg</artifactId>
-	<version>0.0.5</version>
+	<version>1.0.0</version>
 	<name>ttreasurysvkg</name>
 	<description>Project to manage a soccer team</description>
 	<url/>
