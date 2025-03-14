@@ -8,7 +8,6 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Controller
-public class UploadController extends BaseController{
+public class UploadController extends BaseController {
 
     @Autowired
     private UserRepository userRepository;
