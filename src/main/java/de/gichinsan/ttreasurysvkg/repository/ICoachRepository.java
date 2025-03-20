@@ -1,12 +1,14 @@
 package de.gichinsan.ttreasurysvkg.repository;
 
 import de.gichinsan.ttreasurysvkg.model.Coach;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ICoachRepository extends JpaRepository<Coach, Long> {
@@ -17,4 +19,6 @@ public interface ICoachRepository extends JpaRepository<Coach, Long> {
     List<Coach> findAllWithCoachTimes();
 
     List<Coach> findAllById(Iterable<Long> id);
+
+
 }

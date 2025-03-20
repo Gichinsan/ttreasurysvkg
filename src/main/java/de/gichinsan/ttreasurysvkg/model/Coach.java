@@ -26,8 +26,8 @@ public class Coach {
 
     private String trainHours;
 
-    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @ToString.Exclude  //
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<CoachTime> coachTimes = new ArrayList<>();
 
     @Override

@@ -62,7 +62,7 @@ public class CoachController extends BaseController {
         session.setAttribute("coachId", id);
         model.addAttribute("trainTypes", TrainType.values());
         model.addAttribute("coach", coach);
-        model.addAttribute("newCoachTime", new CoachTime()); // Leeres CoachTime-Objekt hinzufügen
+        model.addAttribute("newCoachTime", new CoachTime());
         return "editcoach";
     }
 

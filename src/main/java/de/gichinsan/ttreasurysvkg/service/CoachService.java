@@ -3,22 +3,33 @@ package de.gichinsan.ttreasurysvkg.service;
 import de.gichinsan.ttreasurysvkg.model.Coach;
 import de.gichinsan.ttreasurysvkg.model.CoachTime;
 import de.gichinsan.ttreasurysvkg.repository.ICoachRepository;
+import de.gichinsan.ttreasurysvkg.repository.ICoachTimeRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class CoachService implements ICoachService {
+
 
     @Autowired
     private ICoachRepository iCoachRepository;
 
+    @Autowired
+    private ICoachTimeRepository coachTimeRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
     @Override
     @Transactional
     public List<Coach> getAllCoaches() {
-        return iCoachRepository.findAll();
+        return iCoachRepository.findAllWithCoachTimes();
     }
 
     @Override
@@ -28,6 +39,7 @@ public class CoachService implements ICoachService {
     }
 
     @Override
+    @Transactional
     public void save(Coach coach) {
         iCoachRepository.save(coach);
     }
@@ -50,11 +62,24 @@ public class CoachService implements ICoachService {
     }
 
     @Override
+    @Transactional
     public void addCoachTime(Long coachId, CoachTime newCoachTime) {
         Coach coach = iCoachRepository.findByIdWithCoachTimes(coachId);
         if (coach != null) {
+            if (newCoachTime.getId() != null) {
+                Optional<CoachTime> existingCoachTime = coachTimeRepository.findById(newCoachTime.getId());
+                if (existingCoachTime.isPresent()) {
+                    newCoachTime = existingCoachTime.get();
+                } else {
+                    System.out.println("Warnung: CoachTime mit ID " + newCoachTime.getId() + " existiert nicht! Erstelle eine neue.");
+                    newCoachTime.setId(null);
+                }
+            }
+
+            newCoachTime.setCoach(coach);
             coach.addCoachTime(newCoachTime);
-            iCoachRepository.save(coach); // Speichern mit neuen Zeiten
+
+            coachTimeRepository.save(newCoachTime);
         } else {
             throw new RuntimeException("Coach not found");
         }
@@ -72,5 +97,11 @@ public class CoachService implements ICoachService {
             coach.removeCoachTime(timeToRemove);
             iCoachRepository.save(coach);
         }
+    }
+
+    @Override
+    @Transactional
+    public Optional<Coach> getCoachWithTimes(Long coachId) {
+        return Optional.ofNullable(iCoachRepository.findByIdWithCoachTimes(coachId));
     }
 }
