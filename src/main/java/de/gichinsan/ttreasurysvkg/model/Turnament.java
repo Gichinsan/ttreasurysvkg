@@ -27,8 +27,8 @@ public class Turnament {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date turanmentDate;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private AgeGroups ageGroup;
 
     @ManyToMany (fetch = FetchType.EAGER)
