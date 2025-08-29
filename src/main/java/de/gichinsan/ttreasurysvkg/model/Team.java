@@ -41,8 +41,8 @@ public class Team {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date registriertAm;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private AgeGroups ageGroup;
 
 
