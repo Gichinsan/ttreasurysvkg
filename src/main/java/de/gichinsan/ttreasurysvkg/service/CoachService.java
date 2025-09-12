@@ -101,7 +101,9 @@ public class CoachService implements ICoachService {
 
     @Override
     @Transactional
-    public Optional<Coach> getCoachWithTimes(Long coachId) {
-        return Optional.ofNullable(iCoachRepository.findByIdWithCoachTimes(coachId));
+    public Coach getCoachWithTimes(Long coachId) {
+        return iCoachRepository.findByIdWithCoachTimes(coachId);
     }
+
+
 }

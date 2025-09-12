@@ -58,10 +58,12 @@ public class CoachController extends BaseController {
 
     @GetMapping("/coach/edit/{id}")
     public String editCoach(@PathVariable Long id, Model model, HttpSession session) {
-        Coach coach = coachService.getCoachByIdWithCoachTimes(id);
-        session.setAttribute("coachId", id);
-        model.addAttribute("trainTypes", TrainType.values());
+        Coach coach = coachService.getCoachWithTimes(id);
+
+        session.setAttribute("coach", id);
         model.addAttribute("coach", coach);
+        model.addAttribute("trainTypes", TrainType.values());
+        model.addAttribute("coachTimes", coach.getCoachTimes());
         model.addAttribute("newCoachTime", new CoachTime());
         return "editcoach";
     }

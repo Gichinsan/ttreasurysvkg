@@ -27,6 +27,7 @@ public class Coach {
     private String trainHours;
 
     @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("trainDate ASC, startTime ASC")
     @ToString.Exclude
     private List<CoachTime> coachTimes = new ArrayList<>();
 

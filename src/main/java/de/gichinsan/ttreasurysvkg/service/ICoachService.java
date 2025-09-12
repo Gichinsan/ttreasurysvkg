@@ -4,7 +4,6 @@ import de.gichinsan.ttreasurysvkg.model.Coach;
 import de.gichinsan.ttreasurysvkg.model.CoachTime;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ICoachService {
 
@@ -24,5 +23,6 @@ public interface ICoachService {
 
     void removeCoachTime(Long coachId, Long timeId);
 
-    Optional<Coach> getCoachWithTimes(Long coachId);
+    Coach getCoachWithTimes(Long coachId);
 }
+
