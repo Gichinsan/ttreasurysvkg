@@ -29,7 +29,8 @@
             <td th:text="${coach.totalTrainHours}"></td>
             <td>
                 <a th:href="@{/coach/edit/{id}(id=${coach.id})}" class="ui button">Bearbeiten</a>
-                <a th:href="@{/coach/export/{id}(id=${coach.id})}" class="ui button">Export</a>
+                <a th:href="@{/coach/export/{id}(id=${coach.id})}" class="ui button">Export PDF</a>
+                <a th:href="@{/coach/exportxls/{id}(id=${coach.id})}" class="ui button">Export XLS</a>
                 <form th:action="@{/coach/remove}" method="post" style="display:inline;">
                     <input type="hidden" name="id" th:value="${coach.id}" />
                     <button type="submit" class="ui red button">Löschen</button>
