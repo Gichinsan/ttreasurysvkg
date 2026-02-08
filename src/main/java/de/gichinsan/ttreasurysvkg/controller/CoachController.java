@@ -58,7 +58,7 @@ public class CoachController extends BaseController {
     }
 
     @PostMapping("/coach/create")
-    public String createCoach(@ModelAttribute Coach coach, HttpSession session) throws IOException {
+    public String createCoach(@ModelAttribute Coach coach) {
         coachService.save(coach);
         return "redirect:/coaches";
     }
@@ -76,13 +76,13 @@ public class CoachController extends BaseController {
     }
 
     @PostMapping("/coach/{id}/addTime")
-    public String addCoachTime(@PathVariable Long id, @ModelAttribute CoachTime newCoachTime, Model model) {
+    public String addCoachTime(@PathVariable Long id, @ModelAttribute CoachTime newCoachTime) {
         coachService.addCoachTime(id, newCoachTime);
         return "redirect:/coach/edit/" + id; // Zurück zum Bearbeitungsformular
     }
 
     @PostMapping("/coach/remove")
-    public String removeCoach(@RequestParam Long id) throws IOException {
+    public String removeCoach(@RequestParam Long id) {
         coachService.deleteById(id);
         return "redirect:/coaches";
     }
@@ -94,7 +94,7 @@ public class CoachController extends BaseController {
     }
 
     @GetMapping("/coach/export/{id}")
-    public ResponseEntity<byte[]> exportCoachTimes(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, Model model, HttpSession session) throws MalformedURLException {
+    public ResponseEntity<byte[]> exportCoachTimes(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) throws MalformedURLException {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         Coach coach = coachService.getCoachByIdWithCoachTimes(id);
         List<CoachTime> coachTimesList = coach.getCoachTimes();
@@ -149,66 +149,67 @@ public class CoachController extends BaseController {
     }
 
     @GetMapping("/coach/exportxls/{id}")
-    public ResponseEntity<byte[]> exportCoachTimesToExcel(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, Model model, HttpSession session) throws IOException {
-        ClubManagerUser user = getCurrentClubManagerUser(userDetails);
+    public ResponseEntity<byte[]> exportCoachTimesToExcel(@PathVariable Long id) throws IOException {
+        //@AuthenticationPrincipal UserDetails userDetails,
+       // ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         Coach coach = coachService.getCoachByIdWithCoachTimes(id);
         List<CoachTime> coachTimesList = coach.getCoachTimes();
 
         // Erstelle eine neue Excel-Datei
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Trainerzeiten");
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("Trainerzeiten");
 
-        // Header-Zeile erstellen
-        XSSFRow header = sheet.createRow(1);
-        header.createCell(0).setCellValue("Datum");
-        header.createCell(1).setCellValue("Art der Einheit");
-        header.createCell(2).setCellValue("Anzahl");
-        header.createCell(3).setCellValue("Startzeit");
-        header.createCell(4).setCellValue("Endezeit");
+            // Header-Zeile erstellen
+            XSSFRow header = sheet.createRow(1);
+            header.createCell(0).setCellValue("Datum");
+            header.createCell(1).setCellValue("Art der Einheit");
+            header.createCell(2).setCellValue("Anzahl");
+            header.createCell(3).setCellValue("Startzeit");
+            header.createCell(4).setCellValue("Endezeit");
 
-        // Inhalt-Zellen erstellen
-        int y = 2;
-        for (CoachTime coachTime : coachTimesList) {
-            XSSFRow row = sheet.createRow(y);
+            // Inhalt-Zellen erstellen
+            int y = 2;
+            for (CoachTime coachTime : coachTimesList) {
+                XSSFRow row = sheet.createRow(y);
 
-            // Datum, Startzeit, Endezeit und Art der Einheit in die Zellen hinzufügen
-            row.createCell(0).setCellValue(coachTime.getTrainDate().toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+                // Datum, Startzeit, Endezeit und Art der Einheit in die Zellen hinzufügen
+                row.createCell(0).setCellValue(coachTime.getTrainDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 
-            DateTimeFormatter LocalTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
+                DateTimeFormatter LocalTimeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-            @NotNull(message = "Startzeit darf nicht leer sein") LocalTime start = coachTime.getStartTime();
-            @NotNull(message = "Endzeit darf nicht leer sein") LocalTime end = coachTime.getEndTime();
+                @NotNull(message = "Startzeit darf nicht leer sein") LocalTime start = coachTime.getStartTime();
+                @NotNull(message = "Endzeit darf nicht leer sein") LocalTime end = coachTime.getEndTime();
 
-            Duration duration = Duration.between(start, end);
-            int hours = duration.toHoursPart();
-            int minutes = duration.toMinutesPart();
+                Duration duration = Duration.between(start, end);
+                int hours = duration.toHoursPart();
+                int minutes = duration.toMinutesPart();
 
-            double hoursAndHalf = (hours + (double)minutes / 60);
+                double hoursAndHalf = (hours + (double) minutes / 60);
 
-            row.createCell(1).setCellValue(coachTime.getTrainType().name());
-            row.createCell(2).setCellValue(hoursAndHalf);
-            row.createCell(3).setCellValue(LocalTimeFormat.format(coachTime.getStartTime()));
-            row.createCell(4).setCellValue(LocalTimeFormat.format(coachTime.getEndTime()));
+                row.createCell(1).setCellValue(coachTime.getTrainType().name());
+                row.createCell(2).setCellValue(hoursAndHalf);
+                row.createCell(3).setCellValue(LocalTimeFormat.format(coachTime.getStartTime()));
+                row.createCell(4).setCellValue(LocalTimeFormat.format(coachTime.getEndTime()));
 
-            y++;
+                y++;
+            }
+
+            // Datei in ein ByteArray umwandeln
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            workbook.write(out);
+            byte[] bytes = out.toByteArray();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "trainingszeiten.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(bytes);
         }
-
-        // Datei in ein ByteArray umwandeln
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        workbook.write(out);
-        byte[] bytes = out.toByteArray();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", "trainingszeiten.xlsx");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(bytes);
     }
-
 
 }
