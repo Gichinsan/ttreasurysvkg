@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Trikotsatz erfassen</title>
@@ -18,31 +18,31 @@
           enctype="multipart/form-data"
           th:object="${trikotSatz}">
         <div class="four wide field">
-            <label>Trikot-Typ</label>
-            <select class="ui dropdown" th:field="*{trikotTyp}">
+            <label for="trikotTyp">Trikot-Typ</label>
+            <select class="ui dropdown" th:field="*{trikotTyp}" id="trikotTyp">
                 <option value="HEIM">Heim</option>
                 <option value="AUSWAERTS">Auswärts</option>
             </select>
         </div>
 
         <div class="four wide field">
-            <label>Trikot Anzahl</label>
-            <input type="number" th:field="*{trikotAnzahl}" required>
+            <label for="trikotAnzahl">Trikot Anzahl</label>
+            <input type="number" th:field="*{trikotAnzahl}" id="trikotAnzahl" required>
         </div>
 
         <div class="four wide field">
-            <label>Hose Anzahl</label>
-            <input type="number" th:field="*{hoseAnzahl}" required>
+            <label for="hoseAnzahl">Hose Anzahl</label>
+            <input type="number" th:field="*{hoseAnzahl}" id="hoseAnzahl" required>
         </div>
 
         <div class="four wide field">
-            <label>Hose Größe</label>
-            <input type="text" th:field="*{hoseGroesse}" required>
+            <label for="hoseGroesse">Hose Größe</label>
+            <input type="text" th:field="*{hoseGroesse}" id="hoseGroesse" required>
         </div>
 
         <div class="four wide field">
-            <label>Stutzen Anzahl</label>
-            <input type="number" th:field="*{stutzenAnzahl}" required>
+            <label for="stutzenAnzahl">Stutzen Anzahl</label>
+            <input type="number" th:field="*{stutzenAnzahl}" id="stutzenAnzahl" required>
         </div>
 
         <button type="submit"><i class="green save icon"></i>Speichern</button>

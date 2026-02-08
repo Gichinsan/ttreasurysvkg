@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Spieler erfassen</title>
@@ -18,8 +18,8 @@
           enctype="multipart/form-data"
           th:object="${team}">
         <div class="four wide field">
-            <label>Altersgruppe</label>
-            <select class="ui dropdown" th:field="*{ageGroup}">
+            <label for="ageGroup">Altersgruppe</label>
+            <select class="ui dropdown" th:field="*{ageGroup}" id="ageGroup">
                 <option value="G1">G1</option>
                 <option value="G2">G2</option>
                 <option value="F2">F2</option>
@@ -30,19 +30,20 @@
         </div>
 
         <div class="four wide field">
-            <label>Vorname</label>
-            <input type="text" th:field="*{firstName}" required>
+            <label for="firstName">Vorname</label>
+            <input type="text" th:field="*{firstName}" id="firstName" required>
         </div>
 
         <div class="four wide field">
-            <label>Nachname</label>
-            <input type="text" th:field="*{lastName}" required>
+            <label for="lastName">Nachname</label>
+            <input type="text" th:field="*{lastName}" id="lastName" required>
         </div>
 
         <div class="four wide field">
-            <label>Geburtsdatum</label>
+            <label for="birthDate">Geburtsdatum</label>
             <input type="date"
                    th:field="*{birthDate}"
+                   id="birthDate"
                    required>
         </div>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Meldung von Trainingseinheiten</title>
@@ -18,13 +18,13 @@
           th:object="${coach}">
 
         <div class="four wide field">
-            <label>Vorname</label>
-            <input type="text" th:field="*{firstName}" required>
+            <label for="firstName">Vorname</label>
+            <input type="text" th:field="*{firstName}" id="firstName" required>
         </div>
 
         <div class="four wide field">
-            <label>Nachname</label>
-            <input type="text" th:field="*{lastName}" required>
+            <label for="lastName">Nachname</label>
+            <input type="text" th:field="*{lastName}" id="lastName" required>
         </div>
 
         <button type="submit"><i class="green save icon"></i>Erstellen</button>

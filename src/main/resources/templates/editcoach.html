@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Meldung von Trainingseinheiten</title>
@@ -21,20 +21,20 @@
         <h4 th:text="${coach.lastName}"></h4>
 
         <div class="four wide field">
-            <label>Trainingsstunden</label>
-            <input type="date" th:field="*{trainDate}" required>
+            <label for="trainDate">Trainingsstunden</label>
+            <input type="date" th:field="*{trainDate}" id="trainDate" required>
         </div>
         <div class="four wide field">
-            <label>Startzeit</label>
-            <input type="time" th:field="*{startTime}" required>
+            <label for="startTime">Startzeit</label>
+            <input type="time" th:field="*{startTime}" id="startTime" required>
         </div>
         <div class="four wide field">
-            <label>Endzeit</label>
-            <input type="time" th:field="*{endTime}" required>
+            <label for="endTime">Endzeit</label>
+            <input type="time" th:field="*{endTime}" id="endTime" required>
         </div>
         <div class="four wide field">
-            <label>Trainingsart</label>
-            <select th:field="*{trainType}" class="ui dropdown">
+            <label for="trainType">Trainingsart</label>
+            <select th:field="*{trainType}" id="trainType" class="ui dropdown">
                 <option value="" disabled selected>Wähle eine Trainingsart</option>
                 <option th:each="type : ${trainTypes}" th:value="${type}" th:text="${type}"></option>
             </select>
@@ -68,7 +68,6 @@
         </tr>
         </tbody>
     </table>
-    </form>
 </main>
 </body>
 </html>

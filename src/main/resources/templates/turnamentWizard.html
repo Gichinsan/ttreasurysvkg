@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Turnier-Planung</title>
@@ -63,7 +63,7 @@
                         <div class="ui form">
                             <div class="field">
                                 <label for="turanmentDate">Datum:</label>
-                                <input type="date" id="turanmentDate" name="turanmentDate" th:field="*{turanmentDate}" class="fluid" required="true"/>
+                                <input type="date" id="turanmentDate" name="turanmentDate" th:field="*{turanmentDate}" class="fluid" required/>
                             </div>
                         </div>
                     </div>
@@ -81,8 +81,8 @@
                         <div class="ui form">
                             <div class="field">
                                 <label for="ageGroup">Altersgruppe:</label>
-                                <select class="ui dropdown" th:field="*{ageGroup}" id="ageGroup" name="ageGroup"
-                                        placeholder="Altersgruppe eingeben">
+                                <select class="ui dropdown" th:field="*{ageGroup}" id="ageGroup">
+                                    <option value="" disabled selected>Altersgruppe auswählen</option>
                                     <option value="G1">G1</option>
                                     <option value="G2">G2</option>
                                     <option value="F2">F2</option>

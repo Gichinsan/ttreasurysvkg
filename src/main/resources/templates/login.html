@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
@@ -22,14 +22,14 @@
                 <form th:action="@{/login}" method="post">
                     <div class="ui form">
                         <div class="field">
-                            <label>Username</label>
+                            <label for="username">Username</label>
                             <div class="ui left icon input">
                                 <input type="text" placeholder="Username" id="username" name="username"/>
                                 <i class="user icon"></i>
                             </div>
                         </div>
                         <div class="field">
-                            <label>Password</label>
+                            <label for="password">Password</label>
                             <div class="ui left icon input">
                                 <input type="password" id="password" name="password"/>
                                 <i class="lock icon"></i>

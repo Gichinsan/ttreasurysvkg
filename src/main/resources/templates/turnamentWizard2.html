@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="de">
 <head>
     <meta charset="UTF-8">
     <title>Turnier-Planung</title>
@@ -67,7 +67,11 @@
                                     <td th:text="${teammember.firstName}"></td>
                                     <td th:text="${teammember.lastName}"></td>
                                     <td>
-                                        <input type="checkbox" name="selectedPlayers" th:value="${teammember.id}">
+                                        <input type="checkbox"
+                                               name="selectedPlayers"
+                                               th:value="${teammember.id}"
+                                               id="selectedPlayers"
+                                               aria-label="Spieler auswählen" />
                                     </td>
                                 </tr>
                                 </tbody>
@@ -90,7 +94,7 @@
                                     <td th:text="${coach.firstName}"></td>
                                     <td th:text="${coach.lastName}"></td>
                                     <td>
-                                        <input type="checkbox" name="selectedCoaches" th:value="${coach.id}">
+                                        <input type="checkbox" name="selectedCoaches" th:value="${coach.id}" id="selectedCoaches" aria-label="Trainer auswählen">
                                     </td>
                                 </tr>
                                 </tbody>
