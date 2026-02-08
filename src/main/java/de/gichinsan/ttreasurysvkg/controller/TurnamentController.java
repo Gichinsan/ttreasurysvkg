@@ -12,7 +12,7 @@ import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.Coach;
 import de.gichinsan.ttreasurysvkg.model.Team;
