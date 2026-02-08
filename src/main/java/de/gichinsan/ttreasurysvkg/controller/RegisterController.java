@@ -11,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Random;
 
@@ -36,8 +35,7 @@ public class RegisterController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("user") ClubManagerUser user,
-                               BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes) {
+                               BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             bindingResult.reject("error.user", "Das hat nicht geklappt!");
@@ -68,7 +66,9 @@ public class RegisterController {
     }
 
     /**
-     * @return
+     * generateUniqueKontoCode
+     *
+     * @return String Kontonumber
      */
     private String generateUniqueKontoCode() {
         Random random = new Random();

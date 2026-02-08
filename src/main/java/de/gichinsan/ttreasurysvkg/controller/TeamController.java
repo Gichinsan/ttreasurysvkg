@@ -11,11 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +39,7 @@ public class TeamController {
 
 
     @PostMapping("/team/create")
-    public String createTeamMember(@ModelAttribute Team team, HttpSession session) throws IOException {
+    public String createTeamMember(@ModelAttribute Team team, HttpSession session) {
         Long id = (Long) session.getAttribute("teammemberId"); // ID aus der Session holen
         if (id != null) {
             team.setId(id);
@@ -67,7 +65,7 @@ public class TeamController {
     }
 
     @PostMapping("/team/remove")
-    public String removeTeamMember(@RequestParam Long id) throws IOException {
+    public String removeTeamMember(@RequestParam Long id) {
         teamService.deleteById(id);
         return "redirect:/team";
     }
@@ -80,12 +78,13 @@ public class TeamController {
 
     @PostMapping("/upload/teamList")
     public String handlecsvFileUpload(@RequestParam("csvfile") MultipartFile file, Model model) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        //DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         try (
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
-            String line = reader.readLine();
+            reader.readLine();
+            String line;
 
             while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(",");

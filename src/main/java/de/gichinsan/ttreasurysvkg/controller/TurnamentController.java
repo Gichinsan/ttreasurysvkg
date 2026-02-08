@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.support.SessionStatus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -109,11 +108,25 @@ public class TurnamentController extends BaseController {
     public String reviewKader(Model model, HttpSession session) {
         Turnament turnament = (Turnament) session.getAttribute("sturnament");
 
-        List<Long> selectedCoachesList = (List<Long>) session.getAttribute("selectedCoaches");
-        List<Long> selectedPlayersList = (List<Long>) session.getAttribute("selectedPlayers");
+        Object coachesObj = session.getAttribute("selectedCoaches");
+        List<Long> selectedCoachesList = new ArrayList<>();
+        if (coachesObj instanceof List<?>) {
+            for (Object item : (List<?>) coachesObj) {
+                if (item instanceof Long) {
+                    selectedCoachesList.add((Long) item);
+                }
+            }
+        }
 
-        if (selectedCoachesList == null) selectedCoachesList = new ArrayList<>();
-        if (selectedPlayersList == null) selectedPlayersList = new ArrayList<>();
+        Object playersObj = session.getAttribute("selectedPlayers");
+        List<Long> selectedPlayersList = new ArrayList<>();
+        if (playersObj instanceof List<?>) {
+            for (Object item : (List<?>) playersObj) {
+                if (item instanceof Long) {
+                    selectedPlayersList.add((Long) item);
+                }
+            }
+        }
 
         List<Coach> selectedCoachList = coachService.findAllById(selectedCoachesList);
         List<Team> selectedPlayerList = teamService.findAllById(selectedPlayersList);
@@ -137,7 +150,7 @@ public class TurnamentController extends BaseController {
     }
 
     @PostMapping("/reviewAndSave")
-    public String saveTurnamentKader(HttpSession session, SessionStatus sessionStatus) {
+    public String saveTurnamentKader(HttpSession session) {
 
         Object coachObject = session.getAttribute("selectedCoaches");
         Object playerObject = session.getAttribute("selectedPlayers");
@@ -173,13 +186,13 @@ public class TurnamentController extends BaseController {
     }
 
     @GetMapping("/turnamentWizard4")
-    public String turnamentWizard4(Model model) {
+    public String turnamentWizard4() {
         return "turnamentWizard4";
     }
 
 
     @PostMapping("/backToStart")
-    public String notePage(HttpSession session, SessionStatus sessionStatus) {
+    public String notePage() {
         return "redirect:/turnament";
     }
 
@@ -190,7 +203,7 @@ public class TurnamentController extends BaseController {
     }
 
     @PostMapping("/backtotw2")
-    public String backtoStep2(Model model, HttpSession session) {
+    public String backtoStep2(HttpSession session) {
         session.removeAttribute("selectedCoaches");
         session.removeAttribute("selectedPlayers");
         return "redirect:/turnamentWizard2";
@@ -222,7 +235,7 @@ public class TurnamentController extends BaseController {
         Document document = new Document(pdfDoc, PageSize.A4);
         document.setMargins(36, 36, 36, 36); // Standardränder setzen
 
-        PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+        //PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
 
         // Tabelle für Kopfbereich (Titel & Logo)
@@ -286,7 +299,7 @@ public class TurnamentController extends BaseController {
             // Spieler Liste als Aufzählung
             document.add(new Paragraph("Spieler:").setFont(boldFont).setMarginTop(10));
 
-            com.itextpdf.layout.element.List playerList = new com.itextpdf.layout.element.List().setSymbolIndent(12).setListSymbol("\u2022"); // Bullet-Point-Liste
+            com.itextpdf.layout.element.List playerList = new com.itextpdf.layout.element.List().setSymbolIndent(12).setListSymbol("•"); // Bullet-Point-Liste
             turnament.getPlayers().forEach(player ->
                     playerList.add(new ListItem(player.getFirstName() + " " + player.getLastName()))
             );

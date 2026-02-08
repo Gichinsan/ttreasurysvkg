@@ -28,7 +28,7 @@ public class UploadController extends BaseController {
     private ClubImageService clubImageService;
 
     @GetMapping("/upload")
-    public String showUploadForm(Model model) {
+    public String showUploadForm() {
         return "konto";
     }
 

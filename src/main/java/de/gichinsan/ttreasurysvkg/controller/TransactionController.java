@@ -51,7 +51,7 @@ public class TransactionController extends BaseController {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         List<ClubTransaction> clubTransactions = iTransactionRepository.findByUser(user);
 
-        List<ClubTransactionDto> clubTransactionDtoList = new ArrayList<ClubTransactionDto>();
+        List<ClubTransactionDto> clubTransactionDtoList = new ArrayList<>();
 
         String result = getResult(user);
 

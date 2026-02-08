@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
-
 @Controller
 public class TrikotSatzController {
 
@@ -41,7 +39,7 @@ public class TrikotSatzController {
 
     @PostMapping("/trikots/update/{id}")
     public String updateTrikotSatz(@PathVariable Long id,
-                                   @ModelAttribute TrikotSatz trikotSatz) throws IOException {
+                                   @ModelAttribute TrikotSatz trikotSatz) {
 
         TrikotSatz existingTrikotSatz = trikotSatzService.findById(id);
 
@@ -63,7 +61,7 @@ public class TrikotSatzController {
 
 
     @PostMapping("/trikots/erstellen")
-    public String createTrikotSatz(@ModelAttribute TrikotSatz trikotSatz) throws IOException {
+    public String createTrikotSatz(@ModelAttribute TrikotSatz trikotSatz) {
 
         trikotSatzService.save(trikotSatz);
         return "redirect:/kit";
