@@ -18,7 +18,7 @@
     </div>
 
     <div th:if="${error}">
-        <p style="color: red;">Fehler beim Speichern der Teamliste!</p>
+        <p style="color: red;">Fehler beim Speichern der Teamliste: <span th:text="${error}"></span></p>
     </div>
 
     <form class="ui form" th:action="@{/upload/teamList}" method="post" enctype="multipart/form-data">

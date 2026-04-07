@@ -30,8 +30,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/img/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("Admin")
-                        .requestMatchers("/transactions/**","/konto/**").hasAuthority("Kassenwart")
+                        .requestMatchers("/admin/**").hasAuthority("Admin")
+                        .requestMatchers("/transactions/**","/konto/**").hasAnyAuthority("Admin", "Kassenwart")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

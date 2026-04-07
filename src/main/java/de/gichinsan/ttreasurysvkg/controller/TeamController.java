@@ -87,7 +87,7 @@ public class TeamController {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                String[] columns = line.split(",");
+                String[] columns = line.split(";");
                 if (columns.length < 9) {
                     continue;
                 }
