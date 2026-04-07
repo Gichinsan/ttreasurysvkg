@@ -13,8 +13,7 @@ import java.util.Date;
 public class CoachTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "coach_time_seq")
-    @SequenceGenerator(name = "coach_time_seq", sequenceName = "coach_time_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
