@@ -1,54 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Transaktionen verwalten</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
-    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
-<body>
-<div th:replace="~{header :: header}"></div>
-<main>
-    <h1>Transaktionen verwalten</h1>
-    <div>
-        <h4 class="kontostand">
-            <span> Aktueller Kassenstand: <i class="chart line icon"></i><span th:text="${totalCost}">totalcost</span>€
-            </span>
-        </h4>
 
-    </div>
-    <div class="ui two column grid">
-        <div class="row">
-            <div class="column">
-                <h3><a href="#" th:href="@{/transactions/add}"><i class="green plus square icon"></i>Neue Transaktion
-                    hinzufügen</a>
-                </h3>
-            </div>
-            <div class="column">
-                <h3><a href="#" th:href="@{/transactions/export}"><i class="green download icon"></i>Export aller
-                    Transactionen</a>
-                </h3>
+<body>
+    <div th:replace="~{header :: header}"></div>
+    <main>
+        <h1>Transaktionen verwalten</h1>
+        <div>
+            <h4 class="kontostand">
+                <span> Aktueller Kassenstand: <i class="chart line icon"></i><span
+                        th:text="${totalCost}">totalcost</span>€
+                </span>
+            </h4>
+
+        </div>
+        <div class="ui three column grid">
+            <div class="row">
+                <div class="column">
+                    <h3><a href="#" th:href="@{/transactions/add}"><i class="green plus square icon"></i>Neue
+                            Transaktion
+                            hinzufügen</a>
+                    </h3>
+                </div>
+                <div class="column">
+                    <h3><a href="#" th:href="@{/transactions/export}"><i class="green download icon"></i>PDF
+                            exportieren</a>
+                    </h3>
+                </div>
+                <div class="column">
+                    <h3><a href="#" th:href="@{/transactions/export/csv}"><i class="green download icon"></i>CSV
+                            exportieren</a>
+                    </h3>
+                </div>
             </div>
         </div>
-    </div>
-    <table class="ui inverted green table">
-        <thead>
-        <tr>
-            <th>Datum</th>
-            <th>Typ</th>
-            <th>Betrag</th>
-            <th>Beschreibung</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="transaction : ${transactions}">
-            <td th:text="${transaction.date}">01.01.2024</td>
-            <td th:text="${transaction.type}">Type</td>
-            <td th:text="${transaction.amount}">100.00</td>
-            <td th:text="${transaction.description}">Beispielbeschreibung</td>
-        </tr>
-        </tbody>
-    </table>
-</main>
+
+        <div class="ui two column grid">
+            <div class="row">
+                <div class="column">
+                    <form class="ui form" th:action="@{/transactions/import/csv}" method="post"
+                        enctype="multipart/form-data" style="margin-top: 1em;">
+                        <div class="two fields">
+                            <div class="field">
+                                <label for="csvfile">CSV-Datei importieren</label>
+                                <input id="csvfile" type="file" name="csvfile" required>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <button class="green button" type="submit"><i
+                                        class="green upload icon"></i>Importieren</button>
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+        </div>
+
+        <table class="ui inverted green table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Typ</th>
+                    <th>Betrag</th>
+                    <th>Beschreibung</th>
+                    <th>Aktion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="transaction : ${transactions}">
+                    <td th:text="${transaction.date}">01.01.2024</td>
+                    <td th:text="${transaction.type}">Type</td>
+                    <td th:text="${transaction.amount}">100.00</td>
+                    <td th:text="${transaction.description}">Beispielbeschreibung</td>
+                    <td>
+                        <form th:action="@{/transactions/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${transaction.id}" />
+                            <button type="submit" class="ui red button">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
 </body>
+
 </html>

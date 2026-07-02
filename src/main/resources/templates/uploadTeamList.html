@@ -21,6 +21,10 @@
         <p style="color: red;">Fehler beim Speichern der Teamliste: <span th:text="${error}"></span></p>
     </div>
 
+    <div th:if="${warning}">
+        <p style="color: orange;" th:text="${warning}"></p>
+    </div>
+
     <form class="ui form" th:action="@{/upload/teamList}" method="post" enctype="multipart/form-data">
         <div class="four wide field">
             <label for="file">Hochladen der Liste im CSV Format</label>

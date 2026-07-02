@@ -13,6 +13,7 @@ import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.ClubTransaction;
 import de.gichinsan.ttreasurysvkg.model.ClubTransactionDto;
 import de.gichinsan.ttreasurysvkg.repository.ITransactionRepository;
+import de.gichinsan.ttreasurysvkg.service.TransactionCsvService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,9 +27,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +49,9 @@ public class TransactionController extends BaseController {
 
     @Autowired
     private ITransactionRepository iTransactionRepository;
+
+    @Autowired
+    private TransactionCsvService transactionCsvService;
 
     @GetMapping("/transactions")
     public String viewTransactions(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -169,6 +176,61 @@ public class TransactionController extends BaseController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(out.toByteArray());
+    }
+
+    @PostMapping("/transactions/delete")
+    public String deleteTransaction(@AuthenticationPrincipal UserDetails userDetails,
+                                    @RequestParam Long id) {
+        ClubManagerUser user = getCurrentClubManagerUser(userDetails);
+        iTransactionRepository.findById(id).ifPresent(transaction -> {
+            if (transaction.getUser() != null && transaction.getUser().getId().equals(user.getId())) {
+                iTransactionRepository.deleteById(id);
+            }
+        });
+        return "redirect:/transactions";
+    }
+
+    @GetMapping("/transactions/export/csv")
+    public ResponseEntity<byte[]> downloadTransactionsAsCsv(@AuthenticationPrincipal UserDetails userDetails) {
+        ClubManagerUser user = getCurrentClubManagerUser(userDetails);
+        List<ClubTransaction> transactions = iTransactionRepository.findByUser(user);
+        String csvContent = transactionCsvService.exportTransactions(transactions);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv;charset=UTF-8"));
+        headers.setContentDispositionFormData("attachment", "transactions.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(csvContent.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @PostMapping("/transactions/import/csv")
+    public String importTransactionsFromCsv(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestParam("csvfile") MultipartFile file,
+                                            Model model) throws IOException {
+        if (file.isEmpty()) {
+            model.addAttribute("error", "Bitte wählen Sie eine CSV-Datei aus.");
+            return "redirect:/transactions";
+        }
+
+        ClubManagerUser user = getCurrentClubManagerUser(userDetails);
+        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
+        List<ClubTransaction> importedTransactions = transactionCsvService.importTransactions(content, user);
+        List<ClubTransaction> existingTransactions = iTransactionRepository.findByUser(user);
+        List<ClubTransaction> transactionsToSave = new ArrayList<>();
+
+        for (ClubTransaction transaction : importedTransactions) {
+            if (!transactionCsvService.isDuplicate(transaction, existingTransactions)) {
+                transactionsToSave.add(transaction);
+            }
+        }
+
+        if (!transactionsToSave.isEmpty()) {
+            iTransactionRepository.saveAll(transactionsToSave);
+        }
+
+        return "redirect:/transactions";
     }
 
 }

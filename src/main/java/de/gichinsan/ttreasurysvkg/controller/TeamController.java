@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -78,13 +83,17 @@ public class TeamController {
 
     @PostMapping("/upload/teamList")
     public String handlecsvFileUpload(@RequestParam("csvfile") MultipartFile file, Model model) {
-        //DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        try (
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+        try {
+            byte[] fileBytes = file.getBytes();
+            String decodedContent = decodeText(fileBytes);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(decodedContent.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8))) {
 
             reader.readLine();
             String line;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Set<String> seenInUpload = new HashSet<>();
+            int skippedDuplicates = 0;
+            int importedMembers = 0;
 
             while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(";");
@@ -92,27 +101,74 @@ public class TeamController {
                     continue;
                 }
 
+                String firstName = columns[1].trim();
+                String lastName = columns[0].trim();
+                Date birthDate = dateFormat.parse(columns[2].trim());
+                String identityKey = (firstName + "|" + lastName + "|" + birthDate).toLowerCase();
+
+                if (seenInUpload.contains(identityKey) || teamService.isDuplicate(firstName, lastName, birthDate)) {
+                    skippedDuplicates++;
+                    continue;
+                }
+
+                seenInUpload.add(identityKey);
+
                 Team member = new Team();
-                member.setFirstName(columns[1].trim());
-                member.setLastName(columns[0].trim());
-                member.setBirthDate(new SimpleDateFormat("dd.MM.yyyy").parse(columns[2].trim()));
+                member.setFirstName(firstName);
+                member.setLastName(lastName);
+                member.setBirthDate(birthDate);
                 member.setNationalitaet(columns[3].trim());
                 member.setAStatus(columns[4].trim());
                 member.setVsStatus(columns[5].trim());
                 member.setPassnummer(columns[6].trim());
                 member.setSpielrechtAb(columns[7].trim());
-                member.setRegistriertAm(new SimpleDateFormat("dd.MM.yyyy").parse(columns[8].trim()));
+                member.setRegistriertAm(dateFormat.parse(columns[8].trim()));
                 member.setAgeGroup(AgeGroups.pending);
 
                 teamService.save(member);
+                importedMembers++;
+            }
+
+                String message = "Datei erfolgreich hochgeladen und verarbeitet!";
+                if (importedMembers == 0 && skippedDuplicates > 0) {
+                    message = "Keine neuen Teammitglieder gespeichert. " + skippedDuplicates + " Datensätze wurden als Duplikate übersprungen.";
+                } else if (skippedDuplicates > 0) {
+                    message += " " + skippedDuplicates + " Datensätze wurden als Duplikate übersprungen.";
+                }
+                model.addAttribute("message", message);
             }
         } catch (Exception e) {
             model.addAttribute("error", "Fehler beim Verarbeiten der Datei: " + e.getMessage());
             return "uploadTeamList";
         }
-
-        model.addAttribute("message", "Datei erfolgreich hochgeladen und verarbeitet!");
         return "uploadTeamList";
+    }
+
+    String decodeText(byte[] input) {
+        if (input == null || input.length == 0) {
+            return "";
+        }
+
+        if (input.length >= 3 && input[0] == (byte) 0xEF && input[1] == (byte) 0xBB && input[2] == (byte) 0xBF) {
+            return new String(input, StandardCharsets.UTF_8);
+        }
+        if (input.length >= 2 && input[0] == (byte) 0xFF && input[1] == (byte) 0xFE) {
+            return new String(input, StandardCharsets.UTF_16);
+        }
+        if (input.length >= 2 && input[0] == (byte) 0xFE && input[1] == (byte) 0xFF) {
+            return new String(input, StandardCharsets.UTF_16BE);
+        }
+
+        try {
+            String utf8Text = new String(input, StandardCharsets.UTF_8);
+            if (!utf8Text.contains("\uFFFD")) {
+                return utf8Text;
+            }
+        } catch (Exception ignored) {
+            // fall through to fallback charset
+        }
+
+        return new String(input, Charset.forName("windows-1252"));
     }
 
     @GetMapping("/team/statistik")
