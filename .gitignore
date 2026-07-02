@@ -34,3 +34,4 @@ replay_pid*
 /mvnw.cmd
 /mvnw
 /HELP.md
+*/.vscode/**
