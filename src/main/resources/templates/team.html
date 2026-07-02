@@ -30,13 +30,13 @@
     </div>
 
 
-    <table class="ui inverted green table">
+    <table id="teamTable" class="ui inverted green table">
         <thead>
         <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Birthdate</th>
-            <th>Altersgruppe</th>
+            <th class="sortable" data-sort-key="firstName" style="cursor: pointer;">Firstname</th>
+            <th class="sortable" data-sort-key="lastName" style="cursor: pointer;">Lastname</th>
+            <th class="sortable" data-sort-key="birthDate" style="cursor: pointer;">Birthdate</th>
+            <th class="sortable" data-sort-key="ageGroup" style="cursor: pointer;">Altersgruppe</th>
             <th>Aktionen</th>
         </tr>
         </thead>
@@ -62,5 +62,50 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('teamTable');
+        if (!table) {
+            return;
+        }
+
+        const headers = table.querySelectorAll('thead th.sortable');
+        const tbody = table.querySelector('tbody');
+        const sortDirection = {};
+
+        headers.forEach(function (header) {
+            header.addEventListener('click', function () {
+                const key = header.getAttribute('data-sort-key');
+                const isAscending = sortDirection[key] !== 'asc';
+                sortDirection[key] = isAscending ? 'asc' : 'desc';
+
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                rows.sort(function (a, b) {
+                    const aValue = a.cells[header.cellIndex].textContent.trim().toLowerCase();
+                    const bValue = b.cells[header.cellIndex].textContent.trim().toLowerCase();
+
+                    const isDateColumn = key === 'birthDate';
+                    if (isDateColumn) {
+                        const aDate = new Date(aValue.split('.').reverse().join('-'));
+                        const bDate = new Date(bValue.split('.').reverse().join('-'));
+                        return isAscending ? aDate - bDate : bDate - aDate;
+                    }
+
+                    if (aValue < bValue) {
+                        return isAscending ? -1 : 1;
+                    }
+                    if (aValue > bValue) {
+                        return isAscending ? 1 : -1;
+                    }
+                    return 0;
+                });
+
+                rows.forEach(function (row) {
+                    tbody.appendChild(row);
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>
