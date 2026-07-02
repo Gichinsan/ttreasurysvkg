@@ -1,46 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Meldung von Trainingseinheiten</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
-    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 </head>
+
 <body>
-<div th:replace="~{header :: header}"></div>
-<main>
-    <h1>Meldung von Trainingseinheiten</h1>
+    <div th:replace="~{header :: header}"></div>
+    <main>
+        <h1>Meldung von Trainingseinheiten</h1>
 
-    <h3><a href="#" th:href="@{/coach/create}"><i class="green plus square icon"></i>Neuen Trainer erfassen</a></h3>
+        <h3><a href="#" th:href="@{/coach/create}"><i class="green plus square icon"></i>Neuen Trainer erfassen</a></h3>
 
-    <table class="ui inverted green table">
-        <thead>
-        <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Anzahl Stunden</th>
-            <th>Aktionen</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="coach : ${coaches}">
-            <td th:text="${coach.firstName}"></td>
-            <td th:text="${coach.lastName}"></td>
-            <td th:text="${coach.totalTrainHours}"></td>
-            <td>
-                <a th:href="@{/coach/edit/{id}(id=${coach.id})}" class="ui button">Bearbeiten</a>
-                <a th:href="@{/coach/export/{id}(id=${coach.id})}" class="ui button">Export PDF</a>
-                <a th:href="@{/coach/exportxls/{id}(id=${coach.id})}" class="ui button">Export XLS</a>
-                <form th:action="@{/coach/remove}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${coach.id}" />
-                    <button type="submit" class="ui red button">Löschen</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+        <div class="ui segment">
+            <form class="ui form" th:action="@{/coaches}" method="get">
+                <div class="three fields">
+                    <div class="field">
+                        <label>Monat</label>
+                        <select name="month" multiple class="ui fluid multiple search selection dropdown"
+                                data-placeholder="Monate auswählen">
+                            <option value="">Monate auswählen</option>
+                            <option th:each="m : ${monthOptions}" th:value="${m}" th:text="${m}"
+                                th:selected="${selectedMonths.contains(m)}">
+                            </option>
+                        </select>
+                        <p style="font-size:0.85em; margin-top:0.5rem; color:#555;">Suche oder Strg/Cmd klicken für mehrere Monate</p>
+                    </div>
+                    <div class="field">
+                        <label>Jahr</label>
+                        <select name="year" class="ui dropdown">
+                            <option value="" th:selected="${selectedYear} == null">Alle Jahre</option>
+                            <option th:each="y : ${yearOptions}" th:value="${y}" th:text="${y}"
+                                th:selected="${selectedYear} == ${y}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="field" style="display:flex; align-items:flex-end; gap:0.5rem;">
+                        <button type="submit" class="ui primary button">Filter anwenden</button>
+                        <a th:href="@{/coaches}" class="ui button">Zurücksetzen</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <table class="ui inverted green table">
+            <thead>
+                <tr>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Anzahl Stunden</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="coach : ${coaches}">
+                    <td th:text="${coach.firstName}"></td>
+                    <td th:text="${coach.lastName}"></td>
+                    <td th:text="${coach.totalTrainHours}"></td>
+                    <td>
+                        <a th:href="@{/coach/edit/{id}(id=${coach.id})}" class="ui button">Bearbeiten</a>
+                        <a th:href="@{/coach/export/{id}(id=${coach.id}, month=${selectedMonths}, year=${selectedYear})}"
+                            class="ui button">Export PDF</a>
+                        <a th:href="@{/coach/exportxls/{id}(id=${coach.id}, month=${selectedMonths}, year=${selectedYear})}"
+                            class="ui button">Export XLS</a>
+                        <form th:action="@{/coach/remove}" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${coach.id}" />
+                            <button type="submit" class="ui red button">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
 
-</main>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script>
+        $(function () {
+            $('.ui.dropdown').dropdown({
+                clearable: true,
+                fullTextSearch: true,
+                forceSelection: false
+            });
+        });
+    </script>
 </body>
+
 </html>
