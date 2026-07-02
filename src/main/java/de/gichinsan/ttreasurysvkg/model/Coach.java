@@ -14,7 +14,8 @@ public class Coach {
 
     @Id
     @Column(name = "coach_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "coach_seq")
+    @SequenceGenerator(name = "coach_seq", sequenceName = "coach_seq", allocationSize = 1)
     private Long id;
 
     @NotEmpty(message = "Vorname darf nicht leer sein")
