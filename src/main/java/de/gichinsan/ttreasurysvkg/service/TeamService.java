@@ -2,10 +2,13 @@ package de.gichinsan.ttreasurysvkg.service;
 
 import de.gichinsan.ttreasurysvkg.model.AgeGroups;
 import de.gichinsan.ttreasurysvkg.model.Team;
+import de.gichinsan.ttreasurysvkg.model.Turnament;
 import de.gichinsan.ttreasurysvkg.repository.ITeamRepository;
+import de.gichinsan.ttreasurysvkg.repository.ITurnamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,6 +16,9 @@ public class TeamService implements ITeamService {
 
     @Autowired
     private ITeamRepository iTeamRepository;
+
+    @Autowired
+    private ITurnamentRepository turnamentRepository;
 
     @Override
     public List<Team> getAllTeamMembers() {
@@ -36,6 +42,18 @@ public class TeamService implements ITeamService {
 
     @Override
     public void deleteById(Long id) {
+        Team team = iTeamRepository.findById(id).orElse(null);
+        if (team == null) {
+            return;
+        }
+
+        List<Turnament> turnaments = turnamentRepository.findAll();
+        for (Turnament turnament : turnaments) {
+            if (turnament.getPlayers() != null && turnament.getPlayers().remove(team)) {
+                turnamentRepository.save(turnament);
+            }
+        }
+
         iTeamRepository.deleteById(id);
     }
 
@@ -44,5 +62,9 @@ public class TeamService implements ITeamService {
         return iTeamRepository.findByAgeGroup(ageGroup);
     }
 
+    @Override
+    public boolean isDuplicate(String firstName, String lastName, Date birthDate) {
+        return iTeamRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndBirthDate(firstName, lastName, birthDate);
+    }
 
 }

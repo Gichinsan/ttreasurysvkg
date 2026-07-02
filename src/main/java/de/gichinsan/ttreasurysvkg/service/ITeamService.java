@@ -4,6 +4,7 @@ import de.gichinsan.ttreasurysvkg.model.AgeGroups;
 import de.gichinsan.ttreasurysvkg.model.ClubImage;
 import de.gichinsan.ttreasurysvkg.model.Team;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ITeamService {
@@ -19,4 +20,6 @@ public interface ITeamService {
     void deleteById(Long id);
 
     List<Team> getTeamMembersByAgeGroup(AgeGroups ageGroup);
+
+    boolean isDuplicate(String firstName, String lastName, Date birthDate);
 }
