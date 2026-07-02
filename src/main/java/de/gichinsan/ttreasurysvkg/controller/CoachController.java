@@ -33,10 +33,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Controller
@@ -46,9 +50,45 @@ public class CoachController extends BaseController {
     private CoachService coachService;
 
     @GetMapping("/coaches")
-    String showCocahes(Model model) {
+    String showCocahes(Model model,
+                       @RequestParam(required = false) List<String> month,
+                       @RequestParam(required = false) String year) {
+        List<Integer> selectedMonths = parseIntegerList(month);
+        Integer selectedYear = parseInteger(year);
         model.addAttribute("coaches", coachService.getAllCoaches());
+        model.addAttribute("monthOptions", IntStream.rangeClosed(1, 12).boxed().collect(Collectors.toList()));
+        model.addAttribute("yearOptions", buildYearOptions());
+        model.addAttribute("selectedMonths", selectedMonths);
+        model.addAttribute("selectedYear", selectedYear);
         return "coaches";
+    }
+
+    private List<Integer> buildYearOptions() {
+        int currentYear = Year.now().getValue();
+        return IntStream.rangeClosed(currentYear - 5, currentYear + 1)
+                .boxed()
+                .collect(Collectors.toList());
+    }
+
+    private Integer parseInteger(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.valueOf(value.trim());
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private List<Integer> parseIntegerList(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
+        return values.stream()
+                .map(this::parseInteger)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/coach/create")
@@ -94,10 +134,14 @@ public class CoachController extends BaseController {
     }
 
     @GetMapping("/coach/export/{id}")
-    public ResponseEntity<byte[]> exportCoachTimes(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) throws MalformedURLException {
+    public ResponseEntity<byte[]> exportCoachTimes(@AuthenticationPrincipal UserDetails userDetails,
+                                                   @PathVariable Long id,
+                                                   @RequestParam(required = false) List<String> month,
+                                                   @RequestParam(required = false) Integer year) throws MalformedURLException {
         ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         Coach coach = coachService.getCoachByIdWithCoachTimes(id);
-        List<CoachTime> coachTimesList = coach.getCoachTimes();
+        List<Integer> selectedMonths = parseIntegerList(month);
+        List<CoachTime> coachTimesList = filterCoachTimes(coach.getCoachTimes(), selectedMonths, year);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(out);
@@ -114,7 +158,8 @@ public class CoachController extends BaseController {
         }
 
         document.add(new Paragraph("Trainer Name: " + coach.getFirstName() + " " + coach.getLastName()));
-        document.add(new Paragraph("Geleistete Stunden: " + coach.getTotalTrainHours()));
+        document.add(new Paragraph("Zeitraum: " + formatExportPeriod(selectedMonths, year)));
+        document.add(new Paragraph("Geleistete Stunden: " + formatTotalTrainHours(coachTimesList)));
 
         Table table = new Table(new float[]{3, 2, 2, 5});
         table.addHeaderCell("Datum");
@@ -148,12 +193,52 @@ public class CoachController extends BaseController {
                 .body(out.toByteArray());
     }
 
+    private List<CoachTime> filterCoachTimes(List<CoachTime> allTimes, List<Integer> months, Integer year) {
+        return allTimes.stream()
+                .filter(ct -> {
+                    LocalDate date = ct.getTrainDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    if (!months.isEmpty() && !months.contains(date.getMonthValue())) {
+                        return false;
+                    }
+                    if (year != null && date.getYear() != year) {
+                        return false;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String formatExportPeriod(List<Integer> months, Integer year) {
+        if (months.isEmpty() && year == null) {
+            return "Gesamter Zeitraum";
+        }
+        if (months.isEmpty()) {
+            return String.valueOf(year);
+        }
+        String monthText = months.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return year == null ? monthText : monthText + "." + year;
+    }
+
+    private String formatTotalTrainHours(List<CoachTime> coachTimes) {
+        long totalMinutes = coachTimes.stream()
+                .filter(ct -> ct.getStartTime() != null && ct.getEndTime() != null)
+                .mapToLong(ct -> java.time.Duration.between(ct.getStartTime(), ct.getEndTime()).toMinutes())
+                .sum();
+
+        long hours = totalMinutes / 60;
+        long minutes = totalMinutes % 60;
+        return hours + " Stunden " + minutes + " Minuten";
+    }
+
     @GetMapping("/coach/exportxls/{id}")
-    public ResponseEntity<byte[]> exportCoachTimesToExcel(@PathVariable Long id) throws IOException {
+    public ResponseEntity<byte[]> exportCoachTimesToExcel(@PathVariable Long id,
+                                                          @RequestParam(required = false) List<String> month,
+                                                          @RequestParam(required = false) Integer year) throws IOException {
         //@AuthenticationPrincipal UserDetails userDetails,
        // ClubManagerUser user = getCurrentClubManagerUser(userDetails);
         Coach coach = coachService.getCoachByIdWithCoachTimes(id);
-        List<CoachTime> coachTimesList = coach.getCoachTimes();
+        List<Integer> selectedMonths = parseIntegerList(month);
+        List<CoachTime> coachTimesList = filterCoachTimes(coach.getCoachTimes(), selectedMonths, year);
 
         // Erstelle eine neue Excel-Datei
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
@@ -191,7 +276,7 @@ public class CoachController extends BaseController {
 
                 row.createCell(1).setCellValue(coachTime.getTrainType().name());
                 row.createCell(2).setCellValue(hoursAndHalf);
-                row.createCell(3).setCellValue(LocalTimeFormat.format(coachTime.getStartTime()));
+                        row.createCell(3).setCellValue(LocalTimeFormat.format(coachTime.getStartTime()));
                 row.createCell(4).setCellValue(LocalTimeFormat.format(coachTime.getEndTime()));
 
                 y++;
