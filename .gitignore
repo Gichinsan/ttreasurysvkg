@@ -36,3 +36,4 @@ replay_pid*
 /HELP.md
 */.vscode/**
 .vscode/settings.json
+.vscode
