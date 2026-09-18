@@ -59,6 +59,11 @@ public class TeamService implements ITeamService {
 
     @Override
     public List<Team> getTeamMembersByAgeGroup(AgeGroups ageGroup) {
+        if (ageGroup == AgeGroups.F) {
+            List<Team> fTeams = new java.util.ArrayList<>(iTeamRepository.findByAgeGroup(AgeGroups.F1));
+            fTeams.addAll(iTeamRepository.findByAgeGroup(AgeGroups.F2));
+            return fTeams;
+        }
         return iTeamRepository.findByAgeGroup(ageGroup);
     }
 

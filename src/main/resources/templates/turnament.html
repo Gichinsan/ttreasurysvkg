@@ -14,11 +14,14 @@
     <h1>Turnier-Planung</h1>
 
 
-    <div class="ui two column grid">
+    <div class="ui three column grid">
         <div class="row">
             <div class="column">
-                <h3><a href="#" th:href="@{/turnament/create}"><i class="green plus square icon"></i>Neues Turnier
+                <h3><a href="#" th:href="@{/turnament/create}"><i class="green plus square icon"></i>Turnierteam
                     planen</a></h3>
+            </div>
+             <div class="column">
+                <h3><a href="#" th:href="@{/turnament/plan}"><i class="green plus square icon"></i>Turnierplan Erstellen</a></h3>
             </div>
             <div class="column">
                 <h3><a href="#" th:href="@{/turnament/statistik}"><i class="green plus square icon"></i>Turnier
@@ -64,6 +67,7 @@
                                     <input type="hidden" name="id" th:value="${turnament.id}"/>
                                 <button type="submit" class="ui blue button">Export</button>
                                 </form>
+                                <a class="ui teal button" th:href="@{/turnament/plan(id=${turnament.id})}">Plan bearbeiten</a>
                             </td>
                         </tr>
                         </tbody>

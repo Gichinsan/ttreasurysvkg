@@ -14,4 +14,6 @@ public interface ITurnamentService {
     void removeTurnament(Long id);
 
     Optional<Turnament> getTurnamentById(Long id);
+
+    Turnament savePlan(Turnament turnament);
 }

@@ -70,6 +70,7 @@
                                         <input type="checkbox"
                                                name="selectedPlayers"
                                                th:value="${teammember.id}"
+                                                 th:checked="${selectedPlayerIds.contains(teammember.id)}"
                                                id="selectedPlayers"
                                                aria-label="Spieler auswählen" />
                                     </td>
@@ -94,7 +95,9 @@
                                     <td th:text="${coach.firstName}"></td>
                                     <td th:text="${coach.lastName}"></td>
                                     <td>
-                                        <input type="checkbox" name="selectedCoaches" th:value="${coach.id}" id="selectedCoaches" aria-label="Trainer auswählen">
+                                             <input type="checkbox" name="selectedCoaches" th:value="${coach.id}"
+                                                 th:checked="${selectedCoachIds.contains(coach.id)}"
+                                                 id="selectedCoaches" aria-label="Trainer auswählen">
                                     </td>
                                 </tr>
                                 </tbody>

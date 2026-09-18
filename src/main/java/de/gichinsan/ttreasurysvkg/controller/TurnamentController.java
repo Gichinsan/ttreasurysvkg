@@ -15,11 +15,13 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TextAlignment;
 import de.gichinsan.ttreasurysvkg.model.ClubManagerUser;
 import de.gichinsan.ttreasurysvkg.model.Coach;
+import de.gichinsan.ttreasurysvkg.model.AgeGroups;
 import de.gichinsan.ttreasurysvkg.model.Team;
 import de.gichinsan.ttreasurysvkg.model.Turnament;
 import de.gichinsan.ttreasurysvkg.service.CoachService;
 import de.gichinsan.ttreasurysvkg.service.TeamService;
 import de.gichinsan.ttreasurysvkg.service.TurnamentService;
+import de.gichinsan.ttreasurysvkg.utils.RoundRobinPlanner;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,8 +38,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -70,9 +74,102 @@ public class TurnamentController extends BaseController {
         return "turnamentWizard";
     }
 
+     @GetMapping("/turnament/plan")
+    public String planTurnament(@RequestParam(required = false) Long id, Model model) {
+        Turnament turnament = id == null
+                ? new Turnament()
+                : turnamentService.getTurnamentById(id).orElse(new Turnament());
+        applyPlanDefaults(turnament);
+        model.addAttribute("turnament", turnament);
+        return "planturnament";
+    }
+
+    @PostMapping("/turnament/plan")
+    public String generatePlan(@ModelAttribute Turnament submittedTurnament, Model model) {
+        applyPlanDefaults(submittedTurnament);
+        try {
+            RoundRobinPlanner.Plan plan = RoundRobinPlanner.create(
+                    submittedTurnament.getPlanTeams(),
+                    submittedTurnament.getPlanStartTime(),
+                    submittedTurnament.getPlanEndTime(),
+                    submittedTurnament.getPlanMatchMinutes(),
+                    submittedTurnament.getPlanPauseMinutes());
+
+            Turnament turnament = submittedTurnament.getId() == null
+                    ? submittedTurnament
+                    : turnamentService.getTurnamentById(submittedTurnament.getId()).orElse(submittedTurnament);
+            copyPlanFields(submittedTurnament, turnament);
+            turnament = turnamentService.savePlan(turnament);
+
+            model.addAttribute("turnament", turnament);
+            model.addAttribute("planPreview", plan.matches());
+            model.addAttribute("planMarkdown", plan.toMarkdown());
+        } catch (IllegalArgumentException exception) {
+            applyPlanDefaults(submittedTurnament);
+            model.addAttribute("turnament", submittedTurnament);
+            model.addAttribute("planError", exception.getMessage());
+        }
+        return "planturnament";
+    }
+
+    @GetMapping("/turnament/plan/download")
+    public ResponseEntity<byte[]> downloadPlan(@RequestParam Long id) {
+        Optional<Turnament> turnamentOpt = turnamentService.getTurnamentById(id);
+        if (turnamentOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Turnament turnament = turnamentOpt.get();
+        RoundRobinPlanner.Plan plan = RoundRobinPlanner.create(
+                turnament.getPlanTeams(), turnament.getPlanStartTime(), turnament.getPlanEndTime(),
+                turnament.getPlanMatchMinutes(), turnament.getPlanPauseMinutes());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=turnierplan.md")
+                .contentType(MediaType.parseMediaType("text/markdown"))
+                .body(plan.toMarkdown().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void copyPlanFields(Turnament source, Turnament target) {
+        target.setPlanTeams(source.getPlanTeams());
+        target.setPlanPauseMinutes(source.getPlanPauseMinutes());
+        target.setPlanMatchMinutes(source.getPlanMatchMinutes());
+        target.setPlanStartTime(source.getPlanStartTime());
+        target.setPlanEndTime(source.getPlanEndTime());
+    }
+
+    private void applyPlanDefaults(Turnament turnament) {
+        if (turnament.getAgeGroup() == null) {
+            turnament.setAgeGroup(AgeGroups.pending);
+        }
+        if (turnament.getTuranmentDate() == null) {
+            turnament.setTuranmentDate(new Date());
+        }
+        if (turnament.getPlanStartTime() == null) {
+            turnament.setPlanStartTime("10:00");
+        }
+        if (turnament.getPlanEndTime() == null) {
+            turnament.setPlanEndTime("18:00");
+        }
+        if (turnament.getPlanMatchMinutes() == null) {
+            turnament.setPlanMatchMinutes(10);
+        }
+        if (turnament.getPlanPauseMinutes() == null) {
+            turnament.setPlanPauseMinutes(2);
+        }
+    }
+
     @PostMapping("/tw2")
     public String goToStep2(@ModelAttribute Turnament turnament, HttpSession session) {
-        session.setAttribute("sturnament", turnament);
+        Turnament turnamentForWizard = turnament;
+        if (turnament.getId() != null) {
+            turnamentForWizard = turnamentService.getTurnamentById(turnament.getId())
+                    .orElse(turnament);
+            turnamentForWizard.setClub(turnament.getClub());
+            turnamentForWizard.setPlace(turnament.getPlace());
+            turnamentForWizard.setTuranmentDate(turnament.getTuranmentDate());
+            turnamentForWizard.setAgeGroup(turnament.getAgeGroup());
+        }
+        session.setAttribute("sturnament", turnamentForWizard);
         return "redirect:/turnamentWizard2";
     }
 
@@ -85,6 +182,12 @@ public class TurnamentController extends BaseController {
         model.addAttribute("turnament", turnament);
         model.addAttribute("teamMembers", teamMembers);
         model.addAttribute("coaches", coaches);
+        model.addAttribute("selectedPlayerIds", turnament.getPlayers().stream()
+            .map(Team::getId)
+            .toList());
+        model.addAttribute("selectedCoachIds", turnament.getCoaches().stream()
+            .map(Coach::getId)
+            .toList());
 
         return "turnamentWizard2";
     }

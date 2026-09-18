@@ -46,4 +46,17 @@ public class Turnament {
             inverseJoinColumns = @JoinColumn(name = "player_id")
     )
     private List<Team> players = new ArrayList<>();
+
+        @Lob
+        private String planTeams;
+
+        private Integer planPauseMinutes;
+
+        private Integer planMatchMinutes;
+
+        @Column(length = 5)
+        private String planStartTime;
+
+        @Column(length = 5)
+        private String planEndTime;
 }
