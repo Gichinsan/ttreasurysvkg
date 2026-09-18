@@ -2,6 +2,7 @@ package de.gichinsan.ttreasurysvkg.service;
 
 import de.gichinsan.ttreasurysvkg.model.Team;
 import de.gichinsan.ttreasurysvkg.model.Turnament;
+import de.gichinsan.ttreasurysvkg.model.AgeGroups;
 import de.gichinsan.ttreasurysvkg.repository.ITeamRepository;
 import de.gichinsan.ttreasurysvkg.repository.ITurnamentRepository;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,5 +59,17 @@ class TeamServiceTest {
         assertTrue(turnament.getPlayers().isEmpty());
         verify(turnamentRepository).save(turnament);
         verify(iTeamRepository).deleteById(1L);
+    }
+
+    @Test
+    void shouldReturnF1AndF2TeamsForCombinedFGroup() {
+        Team f1Team = new Team();
+        Team f2Team = new Team();
+        when(iTeamRepository.findByAgeGroup(AgeGroups.F1)).thenReturn(List.of(f1Team));
+        when(iTeamRepository.findByAgeGroup(AgeGroups.F2)).thenReturn(List.of(f2Team));
+
+        List<Team> result = teamService.getTeamMembersByAgeGroup(AgeGroups.F);
+
+        assertEquals(List.of(f1Team, f2Team), result);
     }
 }

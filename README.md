@@ -60,7 +60,7 @@ Oder im gebauten Zustand:
 
 ```bash
 ./mvnw clean package
-java -jar target/ttreasurysvkg-2.2.0.jar
+java -jar target/ttreasurysvkg-2.3.0.jar
 ```
 
 ## Konfiguration

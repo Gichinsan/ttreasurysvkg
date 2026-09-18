@@ -50,4 +50,9 @@ public class TurnamentService implements ITurnamentService {
     public Optional<Turnament> getTurnamentById(Long id) {
         return turnamentRepository.findById(id);
     }
+
+    @Override
+    public Turnament savePlan(Turnament turnament) {
+        return turnamentRepository.save(turnament);
+    }
 }

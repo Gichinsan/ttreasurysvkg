@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Turnier-Planung</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<!-- Header einbinden -->
+<div th:replace="~{header :: header}"></div>
+
+<main>
+    <h1>Turnier Plan Erstellung</h1>
+
+    <form class="ui form" th:action="@{/turnament/plan}" th:object="${turnament}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div class="field">
+            <label for="planTeams">Teams (ein Team pro Zeile)</label>
+            <textarea id="planTeams" th:field="*{planTeams}" rows="8" required
+                      placeholder="SV Klein-Gerau 1&#10;SV Klein-Gerau 2"></textarea>
+        </div>
+        <div class="field">
+            <label for="turanmentDate">Turnierdatum</label>
+            <input id="turanmentDate" type="date" th:field="*{turanmentDate}" required>
+        </div>
+        <div class="three fields">
+            <div class="field">
+                <label for="planStartTime">Startzeit</label>
+                <input id="planStartTime" type="time" th:field="*{planStartTime}" required>
+            </div>
+            <div class="field">
+                <label for="planEndTime">Endzeit</label>
+                <input id="planEndTime" type="time" th:field="*{planEndTime}" required>
+            </div>
+            <div class="field">
+                <label for="planMatchMinutes">Spieldauer (Minuten)</label>
+                <input id="planMatchMinutes" type="number" min="1" th:field="*{planMatchMinutes}" required>
+            </div>
+        </div>
+        <div class="field">
+            <label for="planPauseMinutes">Pause zwischen den Spielen (Minuten)</label>
+            <input id="planPauseMinutes" type="number" min="0" th:field="*{planPauseMinutes}" required>
+        </div>
+        <button class="ui green button" type="submit">Plan erstellen</button>
+    </form>
+
+    <div class="ui negative message" th:if="${planError}" th:text="${planError}"></div>
+
+    <section th:if="${planPreview != null}">
+        <h2>Vorschau</h2>
+        <a class="ui blue button" th:href="@{/turnament/plan/download(id=${turnament.id})}">
+            Markdown herunterladen
+        </a>
+        <table class="ui celled table">
+            <thead>
+            <tr><th>Feld</th><th>Runde</th><th>Startzeit</th><th>Endzeit</th><th>Team 1</th><th>Team 2</th><th>Ergebnis</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="match : ${planPreview}">
+                <td th:text="${match.field}"></td>
+                <td th:text="${match.round}"></td>
+                <td th:text="${match.startText()}"></td>
+                <td th:text="${match.endText()}"></td>
+                <td th:text="${match.teamOne}"></td>
+                <td th:text="${match.teamTwo}"></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</body>
+</html>
